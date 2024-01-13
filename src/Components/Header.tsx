@@ -11,22 +11,22 @@ export const Header: FC = () => {
           </Link>
         </li>
         <li>
-          <Link href="/easy-suites/propriedades" className="hover:text-gray-300">
+          <Link href="/easy-suites/beneficiarios" className="hover:text-gray-300">
             Beneficiários
           </Link>
         </li>
         <li>
-          <Link href="/easy-suites/propriedades" className="hover:text-gray-300">
+          <Link href="/easy-suites/inquilinos" className="hover:text-gray-300">
             Inquilinos
           </Link>
         </li>
         <li>
-          <Link href="/easy-suites/propriedades" className="hover:text-gray-300">
+          <Link href="/easy-suites/quartos" className="hover:text-gray-300">
             Quartos
           </Link>
         </li>
         <li>
-          <Link href="/easy-suites/propriedades" className="hover:text-gray-300">
+          <Link href="/easy-suites/pagamentos" className="hover:text-gray-300">
             Pagamentos
           </Link>
         </li>

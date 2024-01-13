@@ -1,14 +1,16 @@
 "use client";
 import Propriedades from "@/Components/Propriedades";
-import { FC, useEffect, useState } from "react";
-import { getAllPropriedades } from "../../EasySuitesApi/EasySuitesApi";
-import { useGetAllPropriedades } from "../../EasySuitesApi/EasySuitesQueries";
+import { FC } from "react";
+
+import { useGetAllPropriedades } from "../../../EasySuitesApi/EasySuitesQueries";
+import { Propriedade } from "@/types/Propriedade";
 
 const PaginaPropriedades: FC = () => {
-  const propriedades = useGetAllPropriedades();
+  const { data, isLoading, isError } = useGetAllPropriedades();
 
-  if (!propriedades) return null;
-  return <Propriedades propriedades={propriedades} />;
+  if (isLoading) return null;
+  if (isError || data?.length == 0) return null;
+  return <Propriedades propriedades={data as Propriedade[]} />;
 };
 
 export default PaginaPropriedades;
