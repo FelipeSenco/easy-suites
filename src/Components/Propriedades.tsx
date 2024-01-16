@@ -7,30 +7,40 @@ type PropriedadesProps = {
 
 const Propriedades: FC<PropriedadesProps> = ({ propriedades }) => {
   return (
-    <div className="flex flex-col items-center">
-      <div>
-        <table className="border-collapse w-full mt-10">
-          <thead>
-            <tr>
-              <th className="border p-2">Nome</th>
-              <th className="border p-2">Endereco</th>
-              <th className="border p-2">Quartos</th>
-              <th className="border p-2">Inquilinos</th>
-              <th className="border p-2">Vagas</th>
-            </tr>
-          </thead>
-          <tbody>
-            {propriedades.map((p) => (
-              <tr key={p.Id}>
-                <td className="border p-2">{p.Nome}</td>
-                <td className="border p-2">{`${p.Rua}, ${p.Numero}, ${p.cep}, ${p.Cidade}, ${p.Uf}`}</td>
-                <td className="border p-2">{p.numeroQuartos}</td>
-                <td className="border p-2">{p.numeroInquilinos}</td>
-                <td className="border p-2">{p.numeroQuartos - p.numeroInquilinos}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="container mx-auto px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {propriedades.map((propriedade) => (
+          <CardPropriedade key={propriedade.Id} propriedade={propriedade} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+type CardPropriedadeProps = {
+  propriedade: Propriedade;
+};
+
+const CardPropriedade: FC<CardPropriedadeProps> = ({ propriedade }) => {
+  return (
+    <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="p-4">
+        <div className="font-bold text-lg mb-2">{propriedade.Nome}</div>
+        <div className="text-gray-700 text-base">
+          <div>
+            <span className="font-bold">Endereço:</span>{" "}
+            {`${propriedade.Rua}, ${propriedade.Numero}, ${propriedade.cep}, ${propriedade.Cidade}, ${propriedade.Uf}`}
+          </div>
+          <div>
+            <span className="font-bold">Quartos:</span> {propriedade.numeroQuartos}
+          </div>
+          <div>
+            <span className="font-bold">Inquilinos:</span> {propriedade.numeroInquilinos}
+          </div>
+          <div>
+            <span className="font-bold">Vagas Disponíveis:</span> {propriedade.numeroQuartos - propriedade.numeroInquilinos}
+          </div>
+        </div>
       </div>
     </div>
   );

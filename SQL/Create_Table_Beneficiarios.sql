@@ -1,3 +1,4 @@
+
 CREATE TABLE Beneficiarios
 (
 	Id INT IDENTITY(1, 1) PRIMARY KEY,
@@ -9,3 +10,9 @@ CREATE TABLE Beneficiarios
 	ChavePix VARCHAR(255),
 	DataCadastro DATETIME
 )
+
+ALTER TABLE Beneficiarios
+ADD Banco VARCHAR(60)
+
+ALTER TABLE Beneficiarios
+ADD Cpf VARCHAR(18)

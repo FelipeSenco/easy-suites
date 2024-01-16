@@ -1,4 +1,4 @@
-drop table Propriedades
+
 CREATE TABLE Propriedades
 (
 	Id INT IDENTITY(1, 1) PRIMARY KEY,
@@ -11,3 +11,4 @@ CREATE TABLE Propriedades
 	DataCadastro DATETIME,
 )
 
+ALTER TABLE Propriedades ADD Bairro varchar(50)

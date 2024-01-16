@@ -12,3 +12,8 @@ ALTER TABLE Quartos
 ADD CONSTRAINT FK_Quartos_PropriedadeId FOREIGN KEY (PropriedadeId)
 REFERENCES Propriedades(Id);
 
+ALTER TABLE quartos
+drop column area
+
+ALTER TABLE Quartos
+ADD UNIQUE (PropriedadeId, NumeroQuarto);

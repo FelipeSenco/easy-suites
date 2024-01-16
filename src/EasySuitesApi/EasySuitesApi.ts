@@ -1,3 +1,4 @@
+import { Beneficario } from "@/types/Beneficiario";
 import { Propriedade } from "@/types/Propriedade";
 import axios from "axios";
 
@@ -9,4 +10,12 @@ export const getAllPropriedades = async () => {
     parameters: [], // No parameters
   });
   return response.data as Propriedade[];
+};
+
+export const getAllBeneficiarios = async () => {
+  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+    procName: "GetAllBeneficiarios",
+    parameters: [], // No parameters
+  });
+  return response.data as Beneficario[];
 };
