@@ -7,7 +7,7 @@ type PropriedadesProps = {
 
 const Propriedades: FC<PropriedadesProps> = ({ propriedades }) => {
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {propriedades.map((propriedade) => (
           <CardPropriedade key={propriedade.Id} propriedade={propriedade} />
@@ -23,7 +23,7 @@ type CardPropriedadeProps = {
 
 const CardPropriedade: FC<CardPropriedadeProps> = ({ propriedade }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden">
+    <div className={`bg-white rounded-xl shadow-md overflow-hidden propriedade-${propriedade.Id}`}>
       <div className="p-4">
         <div className="font-bold text-lg mb-2">{propriedade.Nome}</div>
         <div className="text-gray-700 text-base">

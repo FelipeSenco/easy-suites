@@ -18,10 +18,21 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+.propriedade-1 {
+  background-color: darkkhaki;
+}
+.propriedade-2 {
+  background-color: rgb(137, 189, 107);
+}
+.propriedade-3 {
+  background-color: rgb(128, 192, 245);
+}
+.propriedade-4 {
+  background-color: rgb(215, 169, 226);
+}
+.propriedade-5 {
+  background-color: rgb(247, 197, 188);
 }
