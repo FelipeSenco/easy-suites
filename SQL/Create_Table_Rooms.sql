@@ -1,4 +1,4 @@
-DROP TABLE Quartos
+
 CREATE TABLE Quartos
 (
 	Id INT IDENTITY(1, 1) PRIMARY KEY,
@@ -17,3 +17,6 @@ drop column area
 
 ALTER TABLE Quartos
 ADD UNIQUE (PropriedadeId, NumeroQuarto);
+
+ALTER TABLE Quartos
+ADD Valor MONEY
