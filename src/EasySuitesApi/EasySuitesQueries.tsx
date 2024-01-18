@@ -1,6 +1,7 @@
 "use client";
-import { useQuery, useQueryClient } from "react-query";
-import { getAllBeneficiarios, getAllInquilinos, getAllPropriedades, getAllQuartos } from "./EasySuitesApi";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { editarValorQuarto, getAllBeneficiarios, getAllInquilinos, getAllPropriedades, getAllQuartos } from "./EasySuitesApi";
+import { Quarto } from "@/types/Quarto";
 
 export const useGetAllPropriedades = (enabled = false) => {
   const queryClient = useQueryClient();
@@ -60,4 +61,22 @@ export const useGetAllInquilinos = (enabled = false) => {
   });
 
   return { data, isLoading, isError };
+};
+
+export const useEditarValorQuarto = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(editarValorQuarto, {
+    onError: (error: Error) => {
+      console.log(error);
+    },
+    onSuccess: (data, args, context) => {
+      const currentData = queryClient.getQueryData(["quartos"]) as Quarto[];
+
+      queryClient.setQueryData(
+        ["quartos"],
+        currentData.map((quarto) => (quarto.Id === args.quartoId ? { ...quarto, Valor: args.novoValor } : quarto))
+      );
+    },
+  });
 };

@@ -23,7 +23,7 @@ const HostModal: FC<HostModalProps> = ({ isOpen, onRequestClose, children }) => 
       overflow: "auto",
       borderRadius: "4px",
       outline: "none",
-      padding: "20px",
+      padding: "10px",
     },
   };
 

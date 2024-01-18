@@ -1,7 +1,9 @@
 "use client";
 import { Quarto } from "@/types/Quarto";
-import { FC, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import HostModal from "./HostModal";
+import { ButtonCancelarConfirmar } from "./ButtonCancelarConfirmar";
+import { useEditarValorQuarto } from "@/EasySuitesApi/EasySuitesQueries";
 
 type QuartosProps = {
   quartos: Quarto[];
@@ -23,7 +25,7 @@ export const Quartos: FC<QuartosProps> = ({ quartos }) => {
           <CardQuarto key={quarto.Id} quarto={quarto} onCardClick={onCardClick} />
         ))}
         <HostModal isOpen={isEditOpen} onRequestClose={() => setIsEditOpen(false)}>
-          <QuartoEdit quarto={editingQuarto} />
+          <EditarQuartoForm quarto={editingQuarto} onCancel={() => setIsEditOpen(false)} />
         </HostModal>
       </div>
     </div>
@@ -61,12 +63,42 @@ export const CardQuarto: FC<CardQuartoProps> = ({ quarto, onCardClick }) => {
 
 type EditQuartoProps = {
   quarto: Quarto;
+  onCancel: () => void;
 };
 
-export const QuartoEdit: FC<EditQuartoProps> = ({ quarto }) => {
+export const EditarQuartoForm: FC<EditQuartoProps> = ({ quarto, onCancel }) => {
+  const [valor, setValor] = useState(quarto.Valor || 0);
+  const { mutateAsync: editarQuartoValor, isLoading, isError, error } = useEditarValorQuarto();
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    await editarQuartoValor({ novoValor: valor, quartoId: quarto.Id });
+    if (!isError) {
+      onCancel();
+    }
+  };
+
   return (
-    <div>
-      {quarto.NumeroQuarto} {quarto.PropriedadeNome}
-    </div>
+    <form onSubmit={onSubmit} className="flex flex-col justify-center items-center gap-4 py-2 px-14">
+      <div className="flex flex-col">
+        <label htmlFor="amount" className="text-gray-700 font-bold mb-1">
+          Valor
+        </label>
+        <input
+          type="number"
+          id="quarto-valor-input"
+          name="quarto-valor"
+          required
+          min={0.01}
+          max={100000}
+          step={0.01}
+          className="border rounded p-2 w-full focus:border-blue-500"
+          placeholder="Quantia"
+          value={valor}
+          onChange={(e) => setValor(parseFloat(e.target.value))}
+        />
+      </div>
+      <ButtonCancelarConfirmar onCancel={onCancel} />
+      {isError && !isLoading && <p className="py-5 text-red-500">{error.message}</p>}
+    </form>
   );
 };
