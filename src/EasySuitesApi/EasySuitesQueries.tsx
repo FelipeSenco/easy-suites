@@ -1,7 +1,16 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { editarValorQuarto, getAllBeneficiarios, getAllInquilinos, getAllPropriedades, getAllQuartos } from "./EasySuitesApi";
+import {
+  adicionarEditarInquilino,
+  editarValorQuarto,
+  excluirInquilino,
+  getAllBeneficiarios,
+  getAllInquilinos,
+  getAllPropriedades,
+  getAllQuartos,
+} from "./EasySuitesApi";
 import { Quarto } from "@/types/Quarto";
+import { Inquilino } from "@/types/Inquilino";
 
 export const useGetAllPropriedades = (enabled = false) => {
   const queryClient = useQueryClient();
@@ -76,6 +85,46 @@ export const useEditarValorQuarto = () => {
       queryClient.setQueryData(
         ["quartos"],
         currentData.map((quarto) => (quarto.Id === args.quartoId ? { ...quarto, Valor: args.novoValor } : quarto))
+      );
+    },
+  });
+};
+
+export const useAdicionarEditarInquilino = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(adicionarEditarInquilino, {
+    onError: (error: Error) => {
+      console.log(error);
+    },
+    onSuccess: (data, args, context) => {
+      const currentData = queryClient.getQueryData(["inquilinos"]) as Inquilino[];
+
+      if (args.id) {
+        queryClient.setQueryData(
+          ["inquilinos"],
+          currentData.map((inquilino) => (inquilino.Id === args.id ? data : inquilino))
+        );
+      } else {
+        queryClient.setQueryData(["inquilinos"], [data, ...currentData]);
+      }
+    },
+  });
+};
+
+export const useExcluirInquilino = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(excluirInquilino, {
+    onError: (error: Error) => {
+      console.log(error);
+    },
+    onSuccess: (data, args, context) => {
+      const currentData = queryClient.getQueryData(["inquilinos"]) as Inquilino[];
+
+      queryClient.setQueryData(
+        ["inquilinos"],
+        currentData.filter((inquilino) => inquilino.Id !== args)
       );
     },
   });

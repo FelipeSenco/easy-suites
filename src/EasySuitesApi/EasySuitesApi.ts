@@ -3,7 +3,7 @@ import { Beneficario } from "@/types/Beneficiario";
 import { Inquilino } from "@/types/Inquilino";
 import { Propriedade } from "@/types/Propriedade";
 import { Quarto } from "@/types/Quarto";
-import { EditarValorQuartoData } from "@/types/RequestData";
+import { AdicionarEditarInquilinoData, EditarValorQuartoData } from "@/types/RequestData";
 import axios from "axios";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -49,6 +49,32 @@ export const editarValorQuarto = async (editarValorQuartoData: EditarValorQuarto
       { name: "novoValor", type: SqlTypes.Money, value: editarValorQuartoData.novoValor },
       { name: "quartoId", type: SqlTypes.Int, value: editarValorQuartoData.quartoId },
     ],
+  });
+  return response;
+};
+
+export const adicionarEditarInquilino = async (adicionarEditarInquilinoData: AdicionarEditarInquilinoData) => {
+  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+    procName: "AdicionarEditarInquilino",
+    parameters: [
+      { name: "id", type: SqlTypes.Int, value: adicionarEditarInquilinoData.id },
+      { name: "quartoId", type: SqlTypes.Int, value: adicionarEditarInquilinoData.quartoId },
+      { name: "propriedadeId", type: SqlTypes.Int, value: adicionarEditarInquilinoData.propriedadeId },
+      { name: "nome", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.nome },
+      { name: "beneficiarioId", type: SqlTypes.Int, value: adicionarEditarInquilinoData.beneficiarioId },
+      { name: "inicioAluguel", type: SqlTypes.DateTime, value: adicionarEditarInquilinoData.inicioAluguel },
+      { name: "fimAluguel", type: SqlTypes.DateTime, value: adicionarEditarInquilinoData.fimAluguel },
+      { name: "diaVencimento", type: SqlTypes.TinyInt, value: adicionarEditarInquilinoData.diaVencimento },
+      { name: "cpf", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.cpf },
+    ],
+  });
+  return response.data[0] as Inquilino;
+};
+
+export const excluirInquilino = async (id: number) => {
+  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+    procName: "ExcluirInquilino",
+    parameters: [{ name: "id", type: SqlTypes.Int, value: id }],
   });
   return response;
 };

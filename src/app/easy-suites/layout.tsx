@@ -1,5 +1,5 @@
 "use client";
-import { Header } from "@/Components/Header";
+import { Header } from "@/Components/Shared/Header";
 import { FC, ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 

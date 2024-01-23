@@ -1,8 +1,8 @@
 export type Inquilino = {
   Id: number;
-  Nome: String;
-  QuartoId: number;
-  NumeroQuarto: number;
+  Nome: string;
+  QuartoId?: number;
+  NumeroQuarto?: number;
   PropriedadeId: number;
   PropriedadeNome: string;
   Cpf: string;

@@ -36,6 +36,10 @@ export class SqlServerRepository {
         return sql.VarChar;
       case SqlTypes.DateTime:
         return sql.DateTime;
+      case SqlTypes.SmallInt:
+        return sql.SmallInt;
+      case SqlTypes.TinyInt:
+        return sql.TinyInt;
       default:
         return sql.VarChar;
     }

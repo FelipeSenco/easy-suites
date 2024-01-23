@@ -37,3 +37,8 @@ ADD UNIQUE (Cpf)
 
 ALTER TABLE Inquilinos
 ADD  UNIQUE (Nome)
+
+ALTER TABLE Inquilinos
+ADD Excluido BIT
+
+

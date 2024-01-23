@@ -1,8 +1,8 @@
 "use client";
 import { Quarto } from "@/types/Quarto";
 import { FC, FormEvent, useState } from "react";
-import HostModal from "./HostModal";
-import { ButtonCancelarConfirmar } from "./ButtonCancelarConfirmar";
+import HostModal from "./Shared/HostModal";
+import { ButtonCancelarConfirmar } from "./Shared/ButtonCancelarConfirmar";
 import { useEditarValorQuarto } from "@/EasySuitesApi/EasySuitesQueries";
 
 type QuartosProps = {
