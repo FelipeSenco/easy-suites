@@ -16,3 +16,6 @@ ADD AnoReferente VARCHAR(4)
 
 ALTER TABLE PagamentosAluguel
 ADD ComprovanteUrl VARCHAR(Max)
+
+ALTER TABLE PagamentosAluguel
+ADD Excluido BIT

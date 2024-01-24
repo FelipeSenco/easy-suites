@@ -5,6 +5,7 @@ import {
   adicionarEditarPagamento,
   editarValorQuarto,
   excluirInquilino,
+  excluirPagamento,
   getAllBeneficiarios,
   getAllInquilinos,
   getAllPagamentos,
@@ -165,6 +166,24 @@ export const useExcluirInquilino = () => {
       queryClient.setQueryData(
         ["inquilinos"],
         currentData.filter((inquilino) => inquilino.Id !== args)
+      );
+    },
+  });
+};
+
+export const useExcluirPagamento = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(excluirPagamento, {
+    onError: (error: Error) => {
+      console.log(error);
+    },
+    onSuccess: (data, args, context) => {
+      const currentData = queryClient.getQueryData(["pagamentos"]) as Inquilino[];
+
+      queryClient.setQueryData(
+        ["pagamentos"],
+        currentData.filter((pagamento) => pagamento.Id !== args)
       );
     },
   });

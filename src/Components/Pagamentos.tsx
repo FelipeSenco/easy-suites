@@ -3,17 +3,20 @@ import { FC, FormEvent, useState } from "react";
 import HostModal from "./Shared/HostModal";
 import { Pagamento } from "@/types/Pagamento";
 import { ButtonCancelarConfirmar } from "./Shared/ButtonCancelarConfirmar";
-import { useAdicionarEditarPagamento, useGetAllPagamentos } from "@/EasySuitesApi/EasySuitesQueries";
+import { useAdicionarEditarPagamento, useExcluirPagamento, useGetAllPagamentos } from "@/EasySuitesApi/EasySuitesQueries";
 import { InquilinoSelect } from "./Shared/InquilinoSelect";
 import MesSelect from "./Shared/MesSelect";
 import AnoSelect from "./Shared/AnoSelect";
 import { formatDateToDDMMYYYY } from "@/app/utils";
+import { ExcluirConfirma } from "./Shared/ExcluirConfirma";
 
 export const Pagamentos: FC = () => {
   const { data: pagamentos } = useGetAllPagamentos();
+  const { mutateAsync: excluirPagamento, isError: isDeleteError, isLoading: isDeleteLoading, error: deleteError } = useExcluirPagamento();
   const [pagamentoAtual, setPagamentoAtual] = useState(null);
   const [adicionarEditarPagamentoOpen, setAdicionarEditarPagamentoOpen] = useState(false);
   const [excluirPagamentoOpen, setExcluirPagamentoOpen] = useState(false);
+  const [pagamentoExcluir, setPagamentoExcluir] = useState<Pagamento>(null);
 
   return (
     <>
@@ -66,7 +69,13 @@ export const Pagamentos: FC = () => {
                   </button>
                 </td>
                 <td className="border p-2">
-                  <button onClick={() => {}} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
+                  <button
+                    onClick={() => {
+                      setPagamentoExcluir(p);
+                      setExcluirPagamentoOpen(true);
+                    }}
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                  >
                     Excluir
                   </button>
                 </td>
@@ -77,6 +86,16 @@ export const Pagamentos: FC = () => {
       </div>
       <HostModal isOpen={adicionarEditarPagamentoOpen} onRequestClose={() => setAdicionarEditarPagamentoOpen(false)}>
         <AdcionarEditarPagamentoForm onCancel={() => setAdicionarEditarPagamentoOpen(false)} pagamento={pagamentoAtual} />
+      </HostModal>
+      <HostModal isOpen={excluirPagamentoOpen} onRequestClose={() => setExcluirPagamentoOpen(false)}>
+        <ExcluirConfirma
+          onCancel={() => setExcluirPagamentoOpen(false)}
+          onConfirm={() => excluirPagamento(pagamentoExcluir.Id)}
+          mensagem={`Tem certeza que quer excluir o pagamento de '${pagamentoExcluir?.NomeInquilino}'?`}
+          isError={isDeleteError}
+          isLoading={isDeleteLoading}
+          error={deleteError}
+        />
       </HostModal>
     </>
   );

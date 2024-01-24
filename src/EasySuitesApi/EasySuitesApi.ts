@@ -80,14 +80,6 @@ export const adicionarEditarInquilino = async (adicionarEditarInquilinoData: Adi
   return response.data[0] as Inquilino;
 };
 
-export const excluirInquilino = async (id: number) => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
-    procName: "ExcluirInquilino",
-    parameters: [{ name: "id", type: SqlTypes.Int, value: id }],
-  });
-  return response;
-};
-
 export const adicionarEditarPagamento = async (adicionarEditarPagamento: AdicionarEditarPagamento) => {
   const response = await axios.post(`${apiUrl}/api/executeProc`, {
     procName: "AdicionarEditarPagamento",
@@ -101,4 +93,20 @@ export const adicionarEditarPagamento = async (adicionarEditarPagamento: Adicion
     ],
   });
   return response.data[0] as Inquilino;
+};
+
+export const excluirInquilino = async (id: number) => {
+  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+    procName: "ExcluirInquilino",
+    parameters: [{ name: "id", type: SqlTypes.Int, value: id }],
+  });
+  return response;
+};
+
+export const excluirPagamento = async (id: number) => {
+  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+    procName: "ExcluirPagamento",
+    parameters: [{ name: "id", type: SqlTypes.Int, value: id }],
+  });
+  return response;
 };

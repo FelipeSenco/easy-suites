@@ -1,4 +1,4 @@
-CREATE PROCEDURE GetAllPagamentos
+alter PROCEDURE GetAllPagamentos
 
 AS 
 
@@ -19,5 +19,5 @@ BEGIN
 			INNER JOIN Inquilinos Inq ON Inq.Id = Pa.InquilinoId
 			INNER JOIN Propriedades P ON p.Id = Inq.PropriedadeId
 			INNER JOIN Quartos Q ON Q.Id = Inq.QuartoId
+			WHERE Pa.Excluido = 0
 END
---grant exec on GetAllPagamentos to easy_suites_dev
