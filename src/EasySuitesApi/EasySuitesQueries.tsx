@@ -2,15 +2,18 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   adicionarEditarInquilino,
+  adicionarEditarPagamento,
   editarValorQuarto,
   excluirInquilino,
   getAllBeneficiarios,
   getAllInquilinos,
+  getAllPagamentos,
   getAllPropriedades,
   getAllQuartos,
 } from "./EasySuitesApi";
 import { Quarto } from "@/types/Quarto";
 import { Inquilino } from "@/types/Inquilino";
+import { Pagamento } from "@/types/Pagamento";
 
 export const useGetAllPropriedades = (enabled = false) => {
   const queryClient = useQueryClient();
@@ -72,6 +75,21 @@ export const useGetAllInquilinos = (enabled = false) => {
   return { data, isLoading, isError };
 };
 
+export const useGetAllPagamentos = (enabled = false) => {
+  const queryClient = useQueryClient();
+  const currentData = queryClient.getQueryData(["pagamentos"]) as [];
+
+  const fetchEnabled = enabled || currentData?.length == 0;
+
+  const { data, isLoading, isError } = useQuery(["pagamentos"], {
+    queryFn: getAllPagamentos,
+    enabled: fetchEnabled,
+    initialData: [],
+  });
+
+  return { data, isLoading, isError };
+};
+
 export const useEditarValorQuarto = () => {
   const queryClient = useQueryClient();
 
@@ -107,6 +125,28 @@ export const useAdicionarEditarInquilino = () => {
         );
       } else {
         queryClient.setQueryData(["inquilinos"], [data, ...currentData]);
+      }
+    },
+  });
+};
+
+export const useAdicionarEditarPagamento = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(adicionarEditarPagamento, {
+    onError: (error: Error) => {
+      console.log(error);
+    },
+    onSuccess: (data, args, context) => {
+      const currentData = queryClient.getQueryData(["pagamentos"]) as Pagamento[];
+
+      if (args.id) {
+        queryClient.setQueryData(
+          ["pagamentos"],
+          currentData.map((pagamento) => (pagamento.Id === args.id ? data : pagamento))
+        );
+      } else {
+        queryClient.setQueryData(["pagamentos"], [data, ...currentData]);
       }
     },
   });

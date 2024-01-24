@@ -1,9 +1,10 @@
 import { SqlTypes } from "@/app/enums/enums";
 import { Beneficario } from "@/types/Beneficiario";
 import { Inquilino } from "@/types/Inquilino";
+import { Pagamento } from "@/types/Pagamento";
 import { Propriedade } from "@/types/Propriedade";
 import { Quarto } from "@/types/Quarto";
-import { AdicionarEditarInquilinoData, EditarValorQuartoData } from "@/types/RequestData";
+import { AdicionarEditarInquilinoData, AdicionarEditarPagamento, EditarValorQuartoData } from "@/types/RequestData";
 import axios from "axios";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -39,6 +40,14 @@ export const getAllInquilinos = async () => {
     parameters: [],
   });
   return response.data as Inquilino[];
+};
+
+export const getAllPagamentos = async () => {
+  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+    procName: "GetAllPagamentos",
+    parameters: [],
+  });
+  return response.data as Pagamento[];
 };
 
 //UPDATES
@@ -77,4 +86,19 @@ export const excluirInquilino = async (id: number) => {
     parameters: [{ name: "id", type: SqlTypes.Int, value: id }],
   });
   return response;
+};
+
+export const adicionarEditarPagamento = async (adicionarEditarPagamento: AdicionarEditarPagamento) => {
+  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+    procName: "AdicionarEditarPagamento",
+    parameters: [
+      { name: "id", type: SqlTypes.Int, value: adicionarEditarPagamento.id },
+      { name: "inquilinoId", type: SqlTypes.Int, value: adicionarEditarPagamento.inquilinoId },
+      { name: "valor", type: SqlTypes.Money, value: adicionarEditarPagamento.valor },
+      { name: "dataPagamento", type: SqlTypes.DateTime, value: adicionarEditarPagamento.dataPagamento },
+      { name: "mesReferente", type: SqlTypes.TinyInt, value: adicionarEditarPagamento.mesReferente },
+      { name: "anoReferente", type: SqlTypes.Varchar, value: adicionarEditarPagamento.anoReferente },
+    ],
+  });
+  return response.data[0] as Inquilino;
 };

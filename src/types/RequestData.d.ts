@@ -14,3 +14,12 @@ export type AdicionarEditarInquilinoData = {
   diaVencimento?: number;
   cpf?: string;
 };
+
+export type AdicionarEditarPagamento = {
+  id?: number;
+  inquilinoId: number;
+  valor: number;
+  dataPagamento: Date;
+  mesReferente: number;
+  anoReferente: string;
+};

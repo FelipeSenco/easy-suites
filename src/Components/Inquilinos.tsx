@@ -175,11 +175,13 @@ const InquilinosForm: FC<InquilinosFormProps> = ({ inquilino, onCancel }) => {
             type="date"
             id="inquilino-inicio-aluguel-input"
             name="inquilino-inicio-aluguel"
+            required
             className="border rounded p-2 w-full focus:border-blue-500"
-            value={inicioAluguel ? inicioAluguel.toString().substring(0, 10) : ""} // Format the date to YYYY-MM-DD
+            value={inicioAluguel ? new Date(inicioAluguel).toISOString().substring(0, 10) : ""}
             onChange={(e) => setInicioAluguel(new Date(e.target.value))}
           />
         </div>
+
         <div className="flex flex-col">
           <label htmlFor="inquilino-fim-aluguel" className="text-gray-700 font-bold mb-1">
             Fim Aluguel
@@ -189,8 +191,8 @@ const InquilinosForm: FC<InquilinosFormProps> = ({ inquilino, onCancel }) => {
             id="inquilino-fim-aluguel-input"
             name="inquilino-fim-aluguel"
             className="border rounded p-2 w-full focus:border-blue-500"
-            value={fimAluguel ? fimAluguel.toString().substring(0, 10) : ""} // Format the date to YYYY-MM-DD
-            onChange={(e) => setFimAluguel(new Date(e.target.value))}
+            value={fimAluguel ? new Date(fimAluguel).toISOString().substring(0, 10) : ""}
+            onChange={(e) => setFimAluguel(e.target.value ? new Date(e.target.value) : null)}
           />
         </div>
       </div>
