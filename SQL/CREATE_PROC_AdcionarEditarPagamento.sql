@@ -1,4 +1,4 @@
-CREATE PROCEDURE AdicionarEditarPagamento
+alter PROCEDURE AdicionarEditarPagamento
 (
 	@id INT = NULL,
 	@inquilinoId INT,
@@ -18,13 +18,17 @@ BEGIN
 					Valor,
 					DataPagamento,
 					MesReferente,
-					AnoReferente)
+					AnoReferente,
+					Excluido,
+					DataCadastro)
 
 			VALUES (@inquilinoId,
 					@valor,
 					@dataPagamento,
 					@mesReferente,
-					@anoReferente)		
+					@anoReferente,
+					0,
+					getdate())		
 					
 			SELECT  Pa.Id,
 					Inq.Nome as NomeInquilino,
@@ -51,7 +55,8 @@ BEGIN
 				Valor = @valor,
 				DataPagamento = @dataPagamento,
 				MesReferente = @mesReferente,
-				AnoReferente = @anoReferente
+				AnoReferente = @anoReferente,
+				DataAtualizacao = getdate()
 			WHERE Id = @id
 
 			SELECT  Pa.Id,

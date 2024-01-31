@@ -7,8 +7,9 @@ import { useAdicionarEditarPagamento, useExcluirPagamento, useGetAllPagamentos }
 import { InquilinoSelect } from "./Shared/InquilinoSelect";
 import MesSelect from "./Shared/MesSelect";
 import AnoSelect from "./Shared/AnoSelect";
-import { formatDateToDDMMYYYY } from "@/app/utils";
+import { Meses, formatDateToDDMMYYYY } from "@/app/utils";
 import { ExcluirConfirma } from "./Shared/ExcluirConfirma";
+import { ComprovanteForm } from "./Comprovantes";
 
 export const Pagamentos: FC = () => {
   const { data: pagamentos } = useGetAllPagamentos();
@@ -17,6 +18,7 @@ export const Pagamentos: FC = () => {
   const [adicionarEditarPagamentoOpen, setAdicionarEditarPagamentoOpen] = useState(false);
   const [excluirPagamentoOpen, setExcluirPagamentoOpen] = useState(false);
   const [pagamentoExcluir, setPagamentoExcluir] = useState<Pagamento>(null);
+  const [editarComprovanteOpen, setEditarComprovanteOpen] = useState(false);
 
   return (
     <>
@@ -52,19 +54,28 @@ export const Pagamentos: FC = () => {
                 <td className="border p-2">{p.NumeroQuarto}</td>
                 <td className="border p-2">R$ {p.Valor}</td>
                 <td className="border p-2">{formatDateToDDMMYYYY(p.DataPagamento)}</td>
-                <td className="border p-2">{p.MesReferente}</td>
+                <td className="border p-2">{Object.keys(Meses).find((key) => Meses[key] === p.MesReferente)}</td>
                 <td className="border p-2">{p.AnoReferente}</td>
                 <td className="border p-2">
                   <button
                     className={"font-bold py-1 px-2 rounded hover:bg-gray-300"}
                     style={!p.ComprovanteUrl ? { color: "red" } : { color: "green" }}
-                    onClick={() => {}}
+                    onClick={() => {
+                      setPagamentoAtual(p);
+                      setEditarComprovanteOpen(true);
+                    }}
                   >
                     {p.ComprovanteUrl ? "Comprovante" : "Sem Comprovante"}
                   </button>
                 </td>
                 <td className="border p-2">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded" onClick={() => {}}>
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
+                    onClick={() => {
+                      setPagamentoAtual(p);
+                      setAdicionarEditarPagamentoOpen(true);
+                    }}
+                  >
                     Editar
                   </button>
                 </td>
@@ -96,6 +107,9 @@ export const Pagamentos: FC = () => {
           isLoading={isDeleteLoading}
           error={deleteError}
         />
+      </HostModal>
+      <HostModal isOpen={editarComprovanteOpen} onRequestClose={() => setEditarComprovanteOpen(false)}>
+        <ComprovanteForm onCancel={() => setEditarComprovanteOpen(false)} pagamento={pagamentoAtual} />
       </HostModal>
     </>
   );

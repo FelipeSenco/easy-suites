@@ -1,6 +1,7 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
+  adicionarEditarComprovante,
   adicionarEditarInquilino,
   adicionarEditarPagamento,
   editarValorQuarto,
@@ -179,11 +180,30 @@ export const useExcluirPagamento = () => {
       console.log(error);
     },
     onSuccess: (data, args, context) => {
-      const currentData = queryClient.getQueryData(["pagamentos"]) as Inquilino[];
+      const currentData = queryClient.getQueryData(["pagamentos"]) as Pagamento[];
 
       queryClient.setQueryData(
         ["pagamentos"],
         currentData.filter((pagamento) => pagamento.Id !== args)
+      );
+    },
+  });
+};
+
+export const useAdicionarEditarComprovante = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(adicionarEditarComprovante, {
+    onError: (error: Error) => {
+      console.log(error);
+    },
+    onSuccess: (data, args, context) => {
+      const currentData = queryClient.getQueryData(["pagamentos"]) as Pagamento[];
+      console.log(data);
+      console.log(args);
+      queryClient.setQueryData(
+        ["pagamentos"],
+        currentData.map((pagamento) => (pagamento.Id === args.pagamento.Id ? { ...pagamento, ComprovanteUrl: data?.url } : pagamento))
       );
     },
   });

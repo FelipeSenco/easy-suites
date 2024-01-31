@@ -1,3 +1,5 @@
+import { Pagamento } from "./Pagamento";
+
 export type EditarValorQuartoData = {
   novoValor: number;
   quartoId: number;
@@ -23,3 +25,5 @@ export type AdicionarEditarPagamento = {
   mesReferente: number;
   anoReferente: string;
 };
+
+export type AdicionarEditarComprovante = { imageBase64: string; pagamento: Pagamento };

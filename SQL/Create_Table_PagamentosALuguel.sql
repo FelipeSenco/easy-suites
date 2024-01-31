@@ -19,3 +19,9 @@ ADD ComprovanteUrl VARCHAR(Max)
 
 ALTER TABLE PagamentosAluguel
 ADD Excluido BIT
+
+ALTER TABLE PagamentosAluguel
+ADD DataCadastro DATETIME
+
+ALTER TABLE PagamentosAluguel
+ADD DataAtualizacao DATETIME

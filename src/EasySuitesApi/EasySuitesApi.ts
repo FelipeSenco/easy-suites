@@ -4,7 +4,7 @@ import { Inquilino } from "@/types/Inquilino";
 import { Pagamento } from "@/types/Pagamento";
 import { Propriedade } from "@/types/Propriedade";
 import { Quarto } from "@/types/Quarto";
-import { AdicionarEditarInquilinoData, AdicionarEditarPagamento, EditarValorQuartoData } from "@/types/RequestData";
+import { AdicionarEditarComprovante, AdicionarEditarInquilinoData, AdicionarEditarPagamento, EditarValorQuartoData } from "@/types/RequestData";
 import axios from "axios";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -93,6 +93,25 @@ export const adicionarEditarPagamento = async (adicionarEditarPagamento: Adicion
     ],
   });
   return response.data[0] as Inquilino;
+};
+
+export const adicionarEditarComprovante = async (data: AdicionarEditarComprovante) => {
+  const responseFromBlob = await axios.post("/api/postBlobImage", data);
+  if (responseFromBlob.data.url) {
+    const response = await axios.post(`${apiUrl}/api/executeProc`, {
+      procName: "AdicionarEditarComprovante",
+      parameters: [
+        { name: "pagamentoId", type: SqlTypes.Int, value: data.pagamento.Id },
+        {
+          name: "url",
+          type: SqlTypes.Varchar,
+          value: responseFromBlob?.data?.url,
+        },
+      ],
+    });
+    return response.data[0] as { url: string; message: string };
+  }
+  return responseFromBlob.data[0] as { url: string; message: string };
 };
 
 export const excluirInquilino = async (id: number) => {

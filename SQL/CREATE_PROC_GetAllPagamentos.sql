@@ -18,6 +18,7 @@ BEGIN
 			FROM PagamentosAluguel Pa
 			INNER JOIN Inquilinos Inq ON Inq.Id = Pa.InquilinoId
 			INNER JOIN Propriedades P ON p.Id = Inq.PropriedadeId
-			INNER JOIN Quartos Q ON Q.Id = Inq.QuartoId
-			WHERE Pa.Excluido = 0
+			INNER JOIN Quartos Q ON Q.Id = Inq.QuartoId		
+			WHERE Pa.Excluido = 0	
+			ORDER BY Pa.DataCadastro DESC
 END

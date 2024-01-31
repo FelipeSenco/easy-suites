@@ -11,14 +11,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   try {
-    const blobService = new BlobStorageService(process.env.AZURE_STORAGE_CONNECTION_STRING, process.env.ENVIRONMENT);
-    console.log(process.env.AZURE_STORAGE_CONNECTION_STRING);
-    console.log(process.env.ENVIRONMENT);
+    const blobService = new BlobStorageService(process.env.AZURE_STORAGE_CONNECTION_STRING, process.env.NEXT_PUBLIC_ENVIRONMENT);
 
     const blobReadableStream = await blobService.getBlobImage(imageName as string);
 
     // Set the content type
-    res.setHeader("Content-Type", "image/jpeg"); // Set appropriate content type based on your image
+    res.setHeader("Content-Type", "image/jpeg");
 
     // Stream the blob to the response
     if (blobReadableStream) {
