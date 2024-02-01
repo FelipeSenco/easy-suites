@@ -16,7 +16,7 @@ export const ComprovanteForm: FC<ComprovanteFormProps> = ({ onCancel, pagamento 
   const [newReceiptImage, setNewReceiptImage] = useState("");
 
   const onUpdate = async () => {
-    await adicionarAtualizarComprovante({ pagamento: pagamento, imageBase64: newReceiptImage });
+    !!newReceiptImage && (await adicionarAtualizarComprovante({ pagamento: pagamento, imageBase64: newReceiptImage }));
     !isError && onCancel();
   };
 

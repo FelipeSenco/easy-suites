@@ -1,5 +1,9 @@
 import { Pagamento } from "./Pagamento";
 
+export type GetAllPagamentos = {
+  pageParam: number;
+};
+
 export type EditarValorQuartoData = {
   novoValor: number;
   quartoId: number;

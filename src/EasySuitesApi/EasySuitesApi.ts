@@ -4,7 +4,13 @@ import { Inquilino } from "@/types/Inquilino";
 import { Pagamento } from "@/types/Pagamento";
 import { Propriedade } from "@/types/Propriedade";
 import { Quarto } from "@/types/Quarto";
-import { AdicionarEditarComprovante, AdicionarEditarInquilinoData, AdicionarEditarPagamento, EditarValorQuartoData } from "@/types/RequestData";
+import {
+  AdicionarEditarComprovante,
+  AdicionarEditarInquilinoData,
+  AdicionarEditarPagamento,
+  EditarValorQuartoData,
+  GetAllPagamentos,
+} from "@/types/RequestData";
 import axios from "axios";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -42,10 +48,10 @@ export const getAllInquilinos = async () => {
   return response.data as Inquilino[];
 };
 
-export const getAllPagamentos = async () => {
+export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0 }) => {
   const response = await axios.post(`${apiUrl}/api/executeProc`, {
     procName: "GetAllPagamentos",
-    parameters: [],
+    parameters: [{ name: "page", type: SqlTypes.SmallInt, value: data.pageParam }],
   });
   return response.data as Pagamento[];
 };
@@ -97,21 +103,19 @@ export const adicionarEditarPagamento = async (adicionarEditarPagamento: Adicion
 
 export const adicionarEditarComprovante = async (data: AdicionarEditarComprovante) => {
   const responseFromBlob = await axios.post("/api/postBlobImage", data);
-  if (responseFromBlob.data.url) {
-    const response = await axios.post(`${apiUrl}/api/executeProc`, {
-      procName: "AdicionarEditarComprovante",
-      parameters: [
-        { name: "pagamentoId", type: SqlTypes.Int, value: data.pagamento.Id },
-        {
-          name: "url",
-          type: SqlTypes.Varchar,
-          value: responseFromBlob?.data?.url,
-        },
-      ],
-    });
-    return response.data[0] as { url: string; message: string };
-  }
-  return responseFromBlob.data[0] as { url: string; message: string };
+
+  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+    procName: "AdicionarEditarComprovante",
+    parameters: [
+      { name: "pagamentoId", type: SqlTypes.Int, value: data.pagamento.Id },
+      {
+        name: "url",
+        type: SqlTypes.Varchar,
+        value: responseFromBlob?.data?.url,
+      },
+    ],
+  });
+  return response.data[0] as { url: string; message: string };
 };
 
 export const excluirInquilino = async (id: number) => {

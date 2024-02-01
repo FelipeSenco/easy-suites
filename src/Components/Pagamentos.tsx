@@ -10,9 +10,10 @@ import AnoSelect from "./Shared/AnoSelect";
 import { Meses, formatDateToDDMMYYYY } from "@/app/utils";
 import { ExcluirConfirma } from "./Shared/ExcluirConfirma";
 import { ComprovanteForm } from "./Comprovantes";
+import IntersectionObserverContainer from "./Shared/IntersectionObserverContainer";
 
 export const Pagamentos: FC = () => {
-  const { data: pagamentos } = useGetAllPagamentos();
+  const { pagamentos, hasNextPage, fetchNextPage } = useGetAllPagamentos();
   const { mutateAsync: excluirPagamento, isError: isDeleteError, isLoading: isDeleteLoading, error: deleteError } = useExcluirPagamento();
   const [pagamentoAtual, setPagamentoAtual] = useState(null);
   const [adicionarEditarPagamentoOpen, setAdicionarEditarPagamentoOpen] = useState(false);
@@ -30,7 +31,7 @@ export const Pagamentos: FC = () => {
           Adicionar
         </button>
       </div>
-      <div className="mt-100 h-[700px] overflow-y-auto">
+      <div className="mt-100 h-[750px] overflow-y-auto">
         <table className="border-collapse w-full mt-5">
           <thead>
             <tr className="bg-white">
@@ -48,15 +49,15 @@ export const Pagamentos: FC = () => {
           </thead>
           <tbody>
             {pagamentos.map((p) => (
-              <tr key={p.Id} className={`propriedade-${p.PropriedadeId}`}>
-                <td className="border p-2">{p.NomeInquilino}</td>
-                <td className="border p-2">{p.PropriedadeNome}</td>
-                <td className="border p-2">{p.NumeroQuarto}</td>
-                <td className="border p-2">R$ {p.Valor}</td>
-                <td className="border p-2">{formatDateToDDMMYYYY(p.DataPagamento)}</td>
-                <td className="border p-2">{Object.keys(Meses).find((key) => Meses[key] === p.MesReferente)}</td>
-                <td className="border p-2">{p.AnoReferente}</td>
-                <td className="border p-2">
+              <tr key={p.Id} className={`bg-green-200`}>
+                <td className="border border-gray-300 p-2">{p.NomeInquilino}</td>
+                <td className="border border-gray-300 p-2">{p.PropriedadeNome}</td>
+                <td className="border border-gray-300 p-2">{p.NumeroQuarto}</td>
+                <td className="border border-gray-300 p-2">R$ {p.Valor}</td>
+                <td className="border border-gray-300 p-2">{formatDateToDDMMYYYY(p.DataPagamento)}</td>
+                <td className="border border-gray-300 p-2">{Object.keys(Meses).find((key) => Meses[key] === p.MesReferente)}</td>
+                <td className="border border-gray-300 p-2">{p.AnoReferente}</td>
+                <td className="border border-gray-300 p-2">
                   <button
                     className={"font-bold py-1 px-2 rounded hover:bg-gray-300"}
                     style={!p.ComprovanteUrl ? { color: "red" } : { color: "green" }}
@@ -68,7 +69,7 @@ export const Pagamentos: FC = () => {
                     {p.ComprovanteUrl ? "Comprovante" : "Sem Comprovante"}
                   </button>
                 </td>
-                <td className="border p-2">
+                <td className="border border-gray-300 p-2">
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
                     onClick={() => {
@@ -79,7 +80,7 @@ export const Pagamentos: FC = () => {
                     Editar
                   </button>
                 </td>
-                <td className="border p-2">
+                <td className="border border-gray-300 p-2">
                   <button
                     onClick={() => {
                       setPagamentoExcluir(p);
@@ -94,6 +95,7 @@ export const Pagamentos: FC = () => {
             ))}
           </tbody>
         </table>
+        {hasNextPage && <IntersectionObserverContainer handleIntersection={fetchNextPage} />}
       </div>
       <HostModal isOpen={adicionarEditarPagamentoOpen} onRequestClose={() => setAdicionarEditarPagamentoOpen(false)}>
         <AdcionarEditarPagamentoForm onCancel={() => setAdicionarEditarPagamentoOpen(false)} pagamento={pagamentoAtual} />
