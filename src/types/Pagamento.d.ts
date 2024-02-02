@@ -11,4 +11,6 @@ export type Pagamento = {
   MesReferente: number;
   AnoReferente: string;
   ComprovanteUrl: string;
+  BeneficiarioNome?: string;
+  Observacao?: string;
 };

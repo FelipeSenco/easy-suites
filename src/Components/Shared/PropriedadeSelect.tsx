@@ -22,9 +22,7 @@ export const PropriedadeSelect: FC<PropriedadeSelectProps> = ({ propriedadeId, s
         onChange={(e) => setPropriedadeId(e.target.value ? Number(e.target.value) : null)}
         required={required}
       >
-        <option value="" disabled>
-          Selecione uma propriedade
-        </option>
+        <option value="">Propriedade</option>
         {propriedades &&
           propriedades.map((propriedade) => (
             <option key={propriedade.Id} value={propriedade.Id}>

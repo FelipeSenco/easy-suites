@@ -85,7 +85,10 @@ export const CardInquilino: FC<CardInquilinoProps> = ({ inquilino, onCardClick, 
           <div>
             <span className="font-bold">Dia de Vencimento:</span> {inquilino.DiaVencimento || "Não definido"}
           </div>
-          {inquilino.BeneficiarioNome && (
+          <div>
+            <span className="font-bold">Telefone:</span> {inquilino.Telefone || "---------"}
+          </div>
+          {!!inquilino.BeneficiarioNome && (
             <div>
               <span className="font-bold">Beneficiário:</span> {inquilino.BeneficiarioNome}
             </div>
@@ -122,6 +125,7 @@ const InquilinosForm: FC<InquilinosFormProps> = ({ inquilino, onCancel }) => {
   const [fimAluguel, setFimAluguel] = useState(inquilino?.FimAluguel);
   const [diaVencimento, setDiaVencimento] = useState(inquilino?.DiaVencimento);
   const [cpf, setCpf] = useState(inquilino?.Cpf);
+  const [telefone, setTelefone] = useState(inquilino?.Telefone);
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -136,6 +140,7 @@ const InquilinosForm: FC<InquilinosFormProps> = ({ inquilino, onCancel }) => {
       fimAluguel,
       diaVencimento,
       cpf,
+      telefone,
     });
     if (!isError) {
       onCancel();
@@ -196,7 +201,7 @@ const InquilinosForm: FC<InquilinosFormProps> = ({ inquilino, onCancel }) => {
           />
         </div>
       </div>
-      <div className="flex flex-row gap-5">
+      <div className="flex flex-row w-full justify-between">
         <div className="flex flex-col">
           <label htmlFor="inquilino-vencimento" className="text-gray-700 font-bold mb-1">
             Vencimento
@@ -229,6 +234,23 @@ const InquilinosForm: FC<InquilinosFormProps> = ({ inquilino, onCancel }) => {
             placeholder="Cpf do inquilino"
             value={cpf || ""}
             onChange={(e) => setCpf(e.target.value)}
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="inquilino-telefone" className="text-gray-700 font-bold mb-1">
+            Telefone
+          </label>
+          <input
+            maxLength={20}
+            minLength={8}
+            type="text"
+            id="inquilino-telefone-input"
+            name="inquilino-telefone"
+            required
+            className="border rounded p-2 w-full focus:border-blue-500"
+            placeholder="Telefone do Inquilino"
+            value={telefone || ""}
+            onChange={(e) => setTelefone(e.target.value)}
           />
         </div>
       </div>

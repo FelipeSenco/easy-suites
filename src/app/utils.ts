@@ -30,16 +30,20 @@ export function formatDateToYYYYMMDD(date: Date) {
   return [year, month, day].join("-");
 }
 
-export function formatDateToDDMMYYYY(date: Date) {
+export function formatDateToDDMMMYYYY(date: Date) {
   if (!date) return "";
 
-  const d = new Date(date);
-  let month = "" + (d.getMonth() + 1); // Months are zero-based
-  let day = "" + d.getDate();
-  const year = d.getFullYear();
+  const parsedDate = new Date(date);
 
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
+  if (isNaN(parsedDate.getTime())) {
+    return "Invalid Date";
+  }
 
-  return [day, month, year].join("/");
+  const monthAbbreviations = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const year = parsedDate.getUTCFullYear();
+  const month = monthAbbreviations[parsedDate.getUTCMonth()]; // Use the abbreviation
+  const day = String(parsedDate.getUTCDate()).padStart(2, "0");
+
+  return [day, month, year].join(" ");
 }

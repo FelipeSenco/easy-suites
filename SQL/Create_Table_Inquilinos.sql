@@ -41,4 +41,7 @@ ADD  UNIQUE (Nome)
 ALTER TABLE Inquilinos
 ADD Excluido BIT
 
+ALTER TABLE Inquilinos
+ADD Telefone VARCHAR(20)
+
 

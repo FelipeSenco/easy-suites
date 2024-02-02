@@ -77,14 +77,29 @@ export const useGetAllInquilinos = (enabled = false) => {
   return { data, isLoading, isError };
 };
 
-export const useGetAllPagamentos = (enabled = false) => {
+type useGetAllPagamentosParams = {
+  anoReferente?: string;
+  mesReferente?: number;
+  enabled?: boolean;
+  inquilinoId?: number;
+  propriedadeId?: number;
+};
+
+export const useGetAllPagamentos = (params: useGetAllPagamentosParams) => {
   const queryClient = useQueryClient();
   const currentData = queryClient.getQueryData(["pagamentos"]) as [];
-  const fetchEnabled = enabled || !currentData;
+  const fetchEnabled = params.enabled || !currentData;
 
   const { data, isError, isFetching, isFetchingNextPage, refetch, fetchNextPage } = useInfiniteQuery(
     ["pagamentos"],
-    async ({ pageParam = 0 }) => getAllPagamentos({ pageParam }),
+    async ({ pageParam = 0 }) =>
+      getAllPagamentos({
+        pageParam,
+        mesReferente: params.mesReferente,
+        anoReferente: params.anoReferente,
+        inquilinoId: params.inquilinoId,
+        propriedadeId: params.propriedadeId,
+      }),
     {
       getNextPageParam: (lastPage, pages) => pages.length,
       enabled: fetchEnabled,

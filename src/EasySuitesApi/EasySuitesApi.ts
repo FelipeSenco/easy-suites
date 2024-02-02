@@ -48,10 +48,16 @@ export const getAllInquilinos = async () => {
   return response.data as Inquilino[];
 };
 
-export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0 }) => {
+export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0, anoReferente: "", mesReferente: null }) => {
   const response = await axios.post(`${apiUrl}/api/executeProc`, {
     procName: "GetAllPagamentos",
-    parameters: [{ name: "page", type: SqlTypes.SmallInt, value: data.pageParam }],
+    parameters: [
+      { name: "page", type: SqlTypes.SmallInt, value: data.pageParam },
+      { name: "anoReferente", type: SqlTypes.Varchar, value: !!data.anoReferente ? data.anoReferente : null },
+      { name: "mesReferente", type: SqlTypes.TinyInt, value: !!data.mesReferente ? data.mesReferente : null },
+      { name: "inquilinoId", type: SqlTypes.TinyInt, value: !!data.inquilinoId ? data.inquilinoId : null },
+      { name: "propriedadeId", type: SqlTypes.TinyInt, value: !!data.propriedadeId ? data.propriedadeId : null },
+    ],
   });
   return response.data as Pagamento[];
 };
@@ -81,6 +87,7 @@ export const adicionarEditarInquilino = async (adicionarEditarInquilinoData: Adi
       { name: "fimAluguel", type: SqlTypes.DateTime, value: adicionarEditarInquilinoData.fimAluguel },
       { name: "diaVencimento", type: SqlTypes.TinyInt, value: adicionarEditarInquilinoData.diaVencimento },
       { name: "cpf", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.cpf },
+      { name: "telefone", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.telefone },
     ],
   });
   return response.data[0] as Inquilino;
@@ -96,6 +103,7 @@ export const adicionarEditarPagamento = async (adicionarEditarPagamento: Adicion
       { name: "dataPagamento", type: SqlTypes.DateTime, value: adicionarEditarPagamento.dataPagamento },
       { name: "mesReferente", type: SqlTypes.TinyInt, value: adicionarEditarPagamento.mesReferente },
       { name: "anoReferente", type: SqlTypes.Varchar, value: adicionarEditarPagamento.anoReferente },
+      { name: "observacao", type: SqlTypes.Varchar, value: !!adicionarEditarPagamento.observacao ? adicionarEditarPagamento.observacao : null },
     ],
   });
   return response.data[0] as Inquilino;

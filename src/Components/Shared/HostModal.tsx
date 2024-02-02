@@ -24,6 +24,7 @@ const HostModal: FC<HostModalProps> = ({ isOpen, onRequestClose, children }) => 
       borderRadius: "4px",
       outline: "none",
       padding: "10px",
+      minWidth: "30vw",
     },
   };
 

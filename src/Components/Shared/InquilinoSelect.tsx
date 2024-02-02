@@ -22,9 +22,7 @@ export const InquilinoSelect: FC<InquilinoSelectProps> = ({ inquilinoId, setInqu
         onChange={(e) => setInquilinoId(e.target.value ? Number(e.target.value) : null)}
         required={required}
       >
-        <option value="" disabled>
-          Selecione uma inquilino
-        </option>
+        <option value="">Inquilino</option>
         {inquilinos &&
           inquilinos.map((inquilino) => (
             <option key={inquilino.Id} value={inquilino.Id}>

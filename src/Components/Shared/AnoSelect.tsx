@@ -1,11 +1,11 @@
 import React, { SetStateAction } from "react";
 
 type AnoSelectProps = {
-  setAno: React.Dispatch<SetStateAction<string>>;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   ano: string;
 };
 
-const AnoSelect: React.FC<AnoSelectProps> = ({ ano, setAno }) => {
+const AnoSelect: React.FC<AnoSelectProps> = ({ ano, onChange }) => {
   const anos = Array.from({ length: 49 }, (_, i) => (2023 + i).toString());
 
   return (
@@ -13,7 +13,8 @@ const AnoSelect: React.FC<AnoSelectProps> = ({ ano, setAno }) => {
       <label htmlFor="ano-select" className="text-gray-700 font-bold mb-1">
         Ano Referente
       </label>
-      <select required value={ano} onChange={(e) => setAno(e.target.value)} className="border rounded p-2 w-full focus:border-blue-500">
+      <select required value={ano || ""} onChange={onChange} className="border rounded p-2 w-full focus:border-blue-500">
+        <option value="">Ano</option>
         {anos.map((year) => (
           <option key={year} value={year}>
             {year}

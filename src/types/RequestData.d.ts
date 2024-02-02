@@ -2,6 +2,10 @@ import { Pagamento } from "./Pagamento";
 
 export type GetAllPagamentos = {
   pageParam: number;
+  anoReferente: string;
+  mesReferente: number;
+  inquilinoId?: number;
+  propriedadeId?: number;
 };
 
 export type EditarValorQuartoData = {
@@ -19,6 +23,7 @@ export type AdicionarEditarInquilinoData = {
   fimAluguel?: Date;
   diaVencimento?: number;
   cpf?: string;
+  telefone?: string;
 };
 
 export type AdicionarEditarPagamento = {
@@ -28,6 +33,7 @@ export type AdicionarEditarPagamento = {
   dataPagamento: Date;
   mesReferente: number;
   anoReferente: string;
+  observacao?: string;
 };
 
 export type AdicionarEditarComprovante = { imageBase64: string; pagamento: Pagamento };

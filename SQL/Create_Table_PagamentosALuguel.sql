@@ -25,3 +25,6 @@ ADD DataCadastro DATETIME
 
 ALTER TABLE PagamentosAluguel
 ADD DataAtualizacao DATETIME
+
+ALTER TABLE PagamentosAluguel
+ADD Observacao VARCHAR(100)

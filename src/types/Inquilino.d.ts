@@ -6,6 +6,7 @@ export type Inquilino = {
   PropriedadeId: number;
   PropriedadeNome: string;
   Cpf: string;
+  Telefone?: string;
   BeneficiarioId?: number;
   BeneficiarioNome?: string;
   DiaVencimento?: number;

@@ -79,8 +79,11 @@ export const EditarQuartoForm: FC<EditQuartoProps> = ({ quarto, onCancel }) => {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col justify-center items-center gap-4 py-2 px-14">
+      <div className="text-gray-700 font-bold mb-1 text-lg">
+        {quarto.PropriedadeNome} - Quarto: {quarto.NumeroQuarto}
+      </div>
       <div className="flex flex-col">
-        <label htmlFor="amount" className="text-gray-700 font-bold mb-1">
+        <label htmlFor="amount" className="text-gray-700  font-bold mb-1">
           Valor
         </label>
         <input
