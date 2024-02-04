@@ -1,4 +1,4 @@
-alter PROCEDURE AdicionarEditarPagamento
+CREATE PROCEDURE AdicionarEditarPagamento
 (
 	@id INT = NULL,
 	@inquilinoId INT,
@@ -8,6 +8,7 @@ alter PROCEDURE AdicionarEditarPagamento
 	@anoReferente VARCHAR(4),
 	@observacao VARCHAR(100) = NULL
 )
+WITH EXECUTE AS 'dbo'
 
 AS
 

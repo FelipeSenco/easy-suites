@@ -1,8 +1,9 @@
-ALTER PROCEDURE AdicionarEditarComprovante
+CREATE PROCEDURE AdicionarEditarComprovante
 (
 	@pagamentoId INT,
 	@url VARCHAR(255) = null
 )
+WITH EXECUTE AS 'dbo'
 
 AS
 

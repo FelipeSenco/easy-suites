@@ -2,12 +2,12 @@ import { useGetAllPropriedades } from "@/EasySuitesApi/EasySuitesQueries";
 import React, { FC, SetStateAction } from "react";
 
 type PropriedadeSelectProps = {
-  setPropriedadeId: React.Dispatch<SetStateAction<number>>;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   propriedadeId: number;
   required?: boolean;
 };
 
-export const PropriedadeSelect: FC<PropriedadeSelectProps> = ({ propriedadeId, setPropriedadeId, required = true }) => {
+export const PropriedadeSelect: FC<PropriedadeSelectProps> = ({ propriedadeId, onChange, required = true }) => {
   const { data: propriedades } = useGetAllPropriedades();
 
   return (
@@ -19,10 +19,10 @@ export const PropriedadeSelect: FC<PropriedadeSelectProps> = ({ propriedadeId, s
         id="propriedade-select"
         className="border rounded p-2 w-full focus:border-blue-500"
         value={propriedadeId ?? ""}
-        onChange={(e) => setPropriedadeId(e.target.value ? Number(e.target.value) : null)}
+        onChange={onChange}
         required={required}
       >
-        <option value="">Propriedade</option>
+        <option value="">-------</option>
         {propriedades &&
           propriedades.map((propriedade) => (
             <option key={propriedade.Id} value={propriedade.Id}>

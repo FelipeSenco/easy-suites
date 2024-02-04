@@ -1,13 +1,14 @@
 import { useGetAllInquilinos } from "@/EasySuitesApi/EasySuitesQueries";
-import React, { FC, SetStateAction } from "react";
+import React, { FC, SetStateAction, useEffect } from "react";
 
 type InquilinoSelectProps = {
   setInquilinoId: React.Dispatch<SetStateAction<number>>;
   inquilinoId: number;
   required?: boolean;
+  propriedadeId?: number;
 };
 
-export const InquilinoSelect: FC<InquilinoSelectProps> = ({ inquilinoId, setInquilinoId, required = true }) => {
+export const InquilinoSelect: FC<InquilinoSelectProps> = ({ inquilinoId, setInquilinoId, propriedadeId, required = true }) => {
   const { data: inquilinos } = useGetAllInquilinos();
 
   return (
@@ -22,13 +23,15 @@ export const InquilinoSelect: FC<InquilinoSelectProps> = ({ inquilinoId, setInqu
         onChange={(e) => setInquilinoId(e.target.value ? Number(e.target.value) : null)}
         required={required}
       >
-        <option value="">Inquilino</option>
+        <option value="">-------</option>
         {inquilinos &&
-          inquilinos.map((inquilino) => (
-            <option key={inquilino.Id} value={inquilino.Id}>
-              {inquilino.Nome}
-            </option>
-          ))}
+          inquilinos
+            .filter((i) => i.PropriedadeId === propriedadeId || !propriedadeId)
+            .map((inquilino) => (
+              <option key={inquilino.Id} value={inquilino.Id}>
+                {inquilino.Nome}
+              </option>
+            ))}
       </select>
     </div>
   );

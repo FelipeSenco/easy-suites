@@ -44,14 +44,19 @@ export const Pagamentos: FC = () => {
     setAnoReferente(e.target.value);
   };
 
+  const onChangePropriedade = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setInquilinoId(null);
+    setPropriedadeId(e.target.value ? Number(e.target.value) : null);
+  };
+
   return (
     <>
       <div className="flex flex-row items-end justify-between mt-5 px-4 rounded p-absolute">
         <div className="flex items-end gap-5 w-3/4">
           <AnoSelect ano={anoReferente} onChange={onChangeAno} />
           {anoReferente && <MesSelect mes={mesReferente} setMes={setMesReferente} />}
-          <PropriedadeSelect propriedadeId={propriedadeId} setPropriedadeId={setPropriedadeId} />
-          <InquilinoSelect inquilinoId={inquilinoId} setInquilinoId={setInquilinoId} />
+          <PropriedadeSelect propriedadeId={propriedadeId} onChange={onChangePropriedade} />
+          <InquilinoSelect inquilinoId={inquilinoId} setInquilinoId={setInquilinoId} propriedadeId={propriedadeId} />
           <button onClick={() => refetch()} className="bg-purple-500 hover:bg-purple-700 text-white h-1/2 font-bold text-lg py-2 px-8 rounded">
             Filtrar
           </button>

@@ -1,8 +1,9 @@
-ALTER PROCEDURE EditarValorQuarto
+CREATE PROCEDURE EditarValorQuarto
 (
 @novoValor MONEY,
 @quartoId int
 )
+WITH EXECUTE AS 'dbo'
 
 AS
 

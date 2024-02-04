@@ -1,7 +1,8 @@
-alter PROCEDURE ExcluirPagamento
+CREATE PROCEDURE ExcluirPagamento
 (
 @id INT 
 )
+WITH EXECUTE AS 'dbo'
 
 AS
 

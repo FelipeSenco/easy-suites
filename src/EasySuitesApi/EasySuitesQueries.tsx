@@ -182,12 +182,16 @@ export const useAdicionarEditarPagamento = () => {
           };
         }
 
-        // If adding a new payment, prepend it to the first page
+        // If adding a new payment
         else {
           const [firstPage, ...rest] = pages;
+
+          // Filter out any pagamento with null Id and matching InquilinoId from the first page
+          const filteredFirstPage = firstPage.filter((pagamento: Pagamento) => !(pagamento.Id === null && pagamento.InquilinoId === args.inquilinoId));
+
           return {
             ...oldQueryData,
-            pages: [[data, ...firstPage], ...rest],
+            pages: [[data, ...filteredFirstPage], ...rest],
           };
         }
       });

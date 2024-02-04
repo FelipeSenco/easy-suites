@@ -1,7 +1,8 @@
-alter PROCEDURE ExcluirInquilino
+CREATE PROCEDURE ExcluirInquilino
 (
 	@id INT
 )
+WITH EXECUTE AS 'dbo'
 
 AS 
 

@@ -12,3 +12,4 @@ CREATE TABLE Propriedades
 )
 
 ALTER TABLE Propriedades ADD Bairro varchar(50)
+ALTER TABLE Propriedades ADD cep varchar(10)

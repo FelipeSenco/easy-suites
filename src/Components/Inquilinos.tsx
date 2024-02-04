@@ -147,10 +147,14 @@ const InquilinosForm: FC<InquilinosFormProps> = ({ inquilino, onCancel }) => {
     }
   };
 
+  const onChangePropriedade = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPropriedadeId(e.target.value ? Number(e.target.value) : null);
+  };
+
   return (
     <form onSubmit={onSubmit} className="flex flex-col justify-center items-start gap-4 py-2 px-14">
       <div className="flex flex-row gap-2">
-        <PropriedadeSelect propriedadeId={propriedadeId} setPropriedadeId={setPropriedadeId} />
+        <PropriedadeSelect propriedadeId={propriedadeId} onChange={onChangePropriedade} />
         {propriedadeId && <QuartoSelect quartoId={quartoId} propriedadeId={propriedadeId} setQuartoId={setQuartoId} />}
         <BeneficiarioSelect beneficiarioId={beneficiarioId} setBeneficiarioId={setBeneficiarioId} />
       </div>
