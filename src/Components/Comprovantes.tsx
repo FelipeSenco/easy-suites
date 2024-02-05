@@ -41,7 +41,7 @@ export const ComprovanteForm: FC<ComprovanteFormProps> = ({ onCancel, pagamento 
   };
 
   return (
-    <div className="flex flex-col justify-center items-center" style={{ maxHeight: "700px", maxWidth: "1000px" }}>
+    <div className="flex flex-col justify-center items-center" style={{ maxHeight: "600px", maxWidth: "1000px" }}>
       <div className="flex flex-col justify-between items-center gap-5 overflow-y-auto">
         <img
           className="w-1/2 h-1/2"
