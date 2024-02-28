@@ -56,7 +56,8 @@ export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0, 
       { name: "anoReferente", type: SqlTypes.Varchar, value: !!data.anoReferente ? data.anoReferente : null },
       { name: "mesReferente", type: SqlTypes.TinyInt, value: !!data.mesReferente ? data.mesReferente : null },
       { name: "inquilinoId", type: SqlTypes.TinyInt, value: !!data.inquilinoId ? data.inquilinoId : null },
-      { name: "propriedadeId", type: SqlTypes.TinyInt, value: !!data.propriedadeId ? data.propriedadeId : null },
+      { name: "propriedadeId", type: SqlTypes.Int, value: !!data.propriedadeId ? data.propriedadeId : null },
+      { name: "beneficiarioId", type: SqlTypes.Int, value: !!data.beneficiarioId ? data.beneficiarioId : null },
     ],
   });
   return response.data as Pagamento[];

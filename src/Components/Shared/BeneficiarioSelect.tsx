@@ -22,9 +22,7 @@ export const BeneficiarioSelect: FC<BeneficiarioSelectProps> = ({ beneficiarioId
         onChange={(e) => setBeneficiarioId(e.target.value ? Number(e.target.value) : null)}
         required={required}
       >
-        <option value="" disabled>
-          Selecione um beneficiário
-        </option>
+        <option value="">------</option>
         {beneficiarios &&
           beneficiarios.map((beneficiario) => (
             <option key={beneficiario.Id} value={beneficiario.Id}>

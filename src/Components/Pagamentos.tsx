@@ -12,13 +12,15 @@ import { ExcluirConfirma } from "./Shared/ExcluirConfirma";
 import { ComprovanteForm } from "./Comprovantes";
 import IntersectionObserverContainer from "./Shared/IntersectionObserverContainer";
 import { PropriedadeSelect } from "./Shared/PropriedadeSelect";
+import { BeneficiarioSelect } from "./Shared/BeneficiarioSelect";
 
 export const Pagamentos: FC = () => {
   const [mesReferente, setMesReferente] = useState(null);
   const [anoReferente, setAnoReferente] = useState(null);
   const [propriedadeId, setPropriedadeId] = useState(null);
   const [inquilinoId, setInquilinoId] = useState(null);
-  const { pagamentos, hasNextPage, fetchNextPage, refetch } = useGetAllPagamentos({ anoReferente, mesReferente, inquilinoId, propriedadeId });
+  const [beneficiarioId, setBeneficiarioId] = useState(null);
+  const { pagamentos, hasNextPage, fetchNextPage, refetch } = useGetAllPagamentos({ anoReferente, mesReferente, inquilinoId, propriedadeId, beneficiarioId });
   const { mutateAsync: excluirPagamento, isError: isDeleteError, isLoading: isDeleteLoading, error: deleteError } = useExcluirPagamento();
   const [pagamentoAtual, setPagamentoAtual] = useState(null);
   const [adicionarEditarPagamentoOpen, setAdicionarEditarPagamentoOpen] = useState(false);
@@ -57,6 +59,7 @@ export const Pagamentos: FC = () => {
           {anoReferente && <MesSelect mes={mesReferente} setMes={setMesReferente} />}
           <PropriedadeSelect propriedadeId={propriedadeId} onChange={onChangePropriedade} />
           <InquilinoSelect inquilinoId={inquilinoId} setInquilinoId={setInquilinoId} propriedadeId={propriedadeId} />
+          <BeneficiarioSelect beneficiarioId={beneficiarioId} setBeneficiarioId={setBeneficiarioId} />
           <button onClick={() => refetch()} className="bg-purple-500 hover:bg-purple-700 text-white h-1/2 font-bold text-lg py-2 px-8 rounded">
             Filtrar
           </button>

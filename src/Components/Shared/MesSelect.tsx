@@ -13,7 +13,7 @@ export const MesSelect: React.FC<MonthSelectProps> = ({ mes, setMes }) => {
         Mês Referente
       </label>
       <select required onChange={(e) => setMes(parseInt(e.target.value, 10))} value={mes || ""} className="border rounded p-2 w-full focus:border-blue-500">
-        <option value="">Mês</option>
+        <option value="">------</option>
         {Object.entries(Meses).map(([monthName, monthNumber]) => (
           <option key={monthName} value={monthNumber}>
             {monthName}

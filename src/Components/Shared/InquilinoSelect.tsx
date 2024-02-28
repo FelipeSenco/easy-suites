@@ -27,6 +27,7 @@ export const InquilinoSelect: FC<InquilinoSelectProps> = ({ inquilinoId, setInqu
         {inquilinos &&
           inquilinos
             .filter((i) => i.PropriedadeId === propriedadeId || !propriedadeId)
+            .sort((a, b) => a.Nome.localeCompare(b.Nome))
             .map((inquilino) => (
               <option key={inquilino.Id} value={inquilino.Id}>
                 {inquilino.Nome}

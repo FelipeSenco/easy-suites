@@ -6,6 +6,7 @@ export type GetAllPagamentos = {
   mesReferente: number;
   inquilinoId?: number;
   propriedadeId?: number;
+  beneficiarioId?: number;
 };
 
 export type EditarValorQuartoData = {
