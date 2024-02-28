@@ -187,9 +187,7 @@ export const Pagamentos: FC = () => {
       </HostModal>
       <HostModal isOpen={observacaoOpen} onRequestClose={onCloseObservacao}>
         <div className="flex flex-col justify-between items-center h-48">
-          <textarea disabled className="w-full p-1 h-28 border-2 border-gray-200">
-            {pagamentoAtual?.Observacao}
-          </textarea>
+          <textarea disabled className="w-full p-1 h-28 border-2 border-gray-200" value={pagamentoAtual?.Observacao}></textarea>
           <button onClick={onCloseObservacao} className="bg-gray-500 hover:bg-gray-700 text-white font-bold  py-2 px-6 rounded mb-5">
             Fechar
           </button>
