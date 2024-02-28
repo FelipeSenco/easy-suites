@@ -109,6 +109,7 @@ export const Pagamentos: FC = () => {
                       setPagamentoAtual(p);
                       setEditarComprovanteOpen(true);
                     }}
+                    disabled={!p.Id}
                   >
                     {p.ComprovanteUrl ? "Comprovante" : "Sem Comprovante"}
                   </button>
