@@ -16,13 +16,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { imageBase64, pagamento } = req.body as UploadRequestBody;
     const blobService = new BlobStorageService(process.env.AZURE_STORAGE_CONNECTION_STRING, process.env.NEXT_PUBLIC_ENVIRONMENT);
+    const mimeType = imageBase64?.substring(5, imageBase64.indexOf(";"));
+    const blobExtension = mimeType.split("/")[1];
 
-    await blobService.postBlobImage(imageBase64, pagamento);
+    await blobService.postBlobFile(imageBase64, pagamento, mimeType, blobExtension);
 
     res.status(200).json({
       message: "File uploaded successfully",
       url: imageBase64
-        ? `/api/getBlobImage?imageName=${process.env.NEXT_PUBLIC_ENVIRONMENT}/inquilino-${pagamento.InquilinoId}/pagamento-${pagamento.Id}.jpeg`
+        ? `/api/getBlobImage?imageName=${process.env.NEXT_PUBLIC_ENVIRONMENT}/inquilino-${pagamento.InquilinoId}/pagamento-${pagamento.Id}.${blobExtension}`
         : null,
     });
   } catch (error) {

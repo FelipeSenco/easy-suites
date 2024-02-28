@@ -10,6 +10,7 @@ import {
   AdicionarEditarPagamento,
   EditarValorQuartoData,
   GetAllPagamentos,
+  GetComprovantePdf,
 } from "@/types/RequestData";
 import axios from "axios";
 
@@ -56,10 +57,19 @@ export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0, 
       { name: "anoReferente", type: SqlTypes.Varchar, value: !!data.anoReferente ? data.anoReferente : null },
       { name: "mesReferente", type: SqlTypes.TinyInt, value: !!data.mesReferente ? data.mesReferente : null },
       { name: "inquilinoId", type: SqlTypes.TinyInt, value: !!data.inquilinoId ? data.inquilinoId : null },
-      { name: "propriedadeId", type: SqlTypes.TinyInt, value: !!data.propriedadeId ? data.propriedadeId : null },
+      { name: "propriedadeId", type: SqlTypes.Int, value: !!data.propriedadeId ? data.propriedadeId : null },
+      { name: "beneficiarioId", type: SqlTypes.Int, value: !!data.beneficiarioId ? data.beneficiarioId : null },
     ],
   });
   return response.data as Pagamento[];
+};
+
+export const getComprovantePdf = async (data: GetComprovantePdf) => {
+  const response = await axios.get(
+    `${apiUrl}/api/getBlobImage?imageName=${process.env.NEXT_PUBLIC_ENVIRONMENT}/inquilino-${data.inquilinoId}/pagamento-${data.pagamentoId}.pdf`,
+    { responseType: "arraybuffer" }
+  );
+  return response.data;
 };
 
 //UPDATES

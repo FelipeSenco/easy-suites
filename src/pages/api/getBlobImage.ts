@@ -13,10 +13,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     const blobService = new BlobStorageService(process.env.AZURE_STORAGE_CONNECTION_STRING, process.env.NEXT_PUBLIC_ENVIRONMENT);
 
-    const blobReadableStream = await blobService.getBlobImage(imageName as string);
+    const { blobReadableStream, blobSize } = await blobService.getBlobImage(imageName as string);
 
+    const split = (imageName as string).split(".");
+    const fileExtension = split[split.length - 1];
+    const mimeType = fileExtension === "pdf" ? "application/pdf" : fileExtension === "jpeg" ? "image/jpeg" : "image/png";
     // Set the content type
-    res.setHeader("Content-Type", "image/jpeg");
+    res.setHeader("Content-Type", mimeType);
+    res.setHeader("Content-Length", blobSize.toString());
+    res.removeHeader("Content-Encoding");
 
     // Stream the blob to the response
     if (blobReadableStream) {

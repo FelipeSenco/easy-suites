@@ -10,21 +10,22 @@ export class BlobStorageService {
     this.environment = environment;
   }
 
-  async getBlobImage(blob: string): Promise<NodeJS.ReadableStream> {
+  async getBlobImage(blob: string): Promise<{ blobReadableStream: NodeJS.ReadableStream; blobSize: number }> {
     const containerClient = this.client.getContainerClient("easysuites");
     const blobClient = containerClient.getBlobClient(blob);
 
     const downloadBlockBlobResponse = await blobClient.download();
+    const blobSize = downloadBlockBlobResponse.contentLength;
     const blobReadableStream = downloadBlockBlobResponse.readableStreamBody;
-    return blobReadableStream;
+    return { blobReadableStream, blobSize };
   }
 
-  async postBlobImage(image64: string, pagamento: Pagamento) {
-    const blobName = `${this.environment}/inquilino-${pagamento.InquilinoId}/pagamento-${pagamento.Id}.jpeg`;
+  async postBlobFile(fileData: string, pagamento: Pagamento, mimeType: string, blobExtension: string) {
+    const blobName = `${this.environment}/inquilino-${pagamento.InquilinoId}/pagamento-${pagamento.Id}.${blobExtension}`;
     const containerClient = this.client.getContainerClient("easysuites");
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    if (!image64) {
+    if (!fileData) {
       const exists = await blockBlobClient.exists();
       if (exists) {
         await blockBlobClient.delete();
@@ -32,10 +33,10 @@ export class BlobStorageService {
       return;
     }
 
-    const buffer = await this.base64ToBuffer(image64);
+    const buffer = await this.base64ToBuffer(fileData);
 
     await blockBlobClient.upload(buffer, buffer.length, {
-      blobHTTPHeaders: { blobContentType: "image/jpeg" },
+      blobHTTPHeaders: { blobContentType: mimeType },
     });
   }
 

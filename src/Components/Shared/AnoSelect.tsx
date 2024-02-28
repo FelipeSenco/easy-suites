@@ -14,7 +14,7 @@ const AnoSelect: React.FC<AnoSelectProps> = ({ ano, onChange }) => {
         Ano Referente
       </label>
       <select required value={ano || ""} onChange={onChange} className="border rounded p-2 w-full focus:border-blue-500">
-        <option value="">Ano</option>
+        <option value="">------</option>
         {anos.map((year) => (
           <option key={year} value={year}>
             {year}

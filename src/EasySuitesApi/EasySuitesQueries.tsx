@@ -83,6 +83,7 @@ type useGetAllPagamentosParams = {
   enabled?: boolean;
   inquilinoId?: number;
   propriedadeId?: number;
+  beneficiarioId?: number;
 };
 
 export const useGetAllPagamentos = (params: useGetAllPagamentosParams) => {
@@ -99,6 +100,7 @@ export const useGetAllPagamentos = (params: useGetAllPagamentosParams) => {
         anoReferente: params.anoReferente,
         inquilinoId: params.inquilinoId,
         propriedadeId: params.propriedadeId,
+        beneficiarioId: params.beneficiarioId,
       }),
     {
       getNextPageParam: (lastPage, pages) => pages.length,
