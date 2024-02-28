@@ -1,5 +1,5 @@
 "use client";
-import { FC, FormEvent, ReactEventHandler, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import HostModal from "./Shared/HostModal";
 import { Pagamento } from "@/types/Pagamento";
 import { ButtonCancelarConfirmar } from "./Shared/ButtonCancelarConfirmar";
@@ -179,8 +179,8 @@ export const Pagamentos: FC = () => {
           error={deleteError}
         />
       </HostModal>
-      <HostModal isOpen={editarComprovanteOpen} onRequestClose={() => setEditarComprovanteOpen(false)}>
-        <ComprovanteForm onCancel={() => setEditarComprovanteOpen(false)} pagamento={pagamentoAtual} />
+      <HostModal isOpen={editarComprovanteOpen} onRequestClose={() => {setEditarComprovanteOpen(false);setPagamentoAtual(null)}}>
+        <ComprovanteForm onCancel={() => {setEditarComprovanteOpen(false);setPagamentoAtual(null)}} pagamento={pagamentoAtual} />
       </HostModal>
       <HostModal isOpen={observacaoOpen} onRequestClose={onCloseObservacao}>
         <div className="flex flex-col justify-between items-center h-48">
