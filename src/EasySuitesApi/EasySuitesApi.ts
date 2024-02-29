@@ -9,6 +9,7 @@ import {
   AdicionarEditarInquilinoData,
   AdicionarEditarPagamento,
   EditarValorQuartoData,
+  GenerateFromReceiptResponse,
   GetAllPagamentos,
   GetComprovantePdf,
 } from "@/types/RequestData";
@@ -18,7 +19,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 //GETS
 export const getAllPropriedades = async () => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllPropriedades",
     parameters: [],
   });
@@ -26,7 +27,7 @@ export const getAllPropriedades = async () => {
 };
 
 export const getAllBeneficiarios = async () => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllBeneficiarios",
     parameters: [],
   });
@@ -34,7 +35,7 @@ export const getAllBeneficiarios = async () => {
 };
 
 export const getAllQuartos = async () => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllQuartos",
     parameters: [],
   });
@@ -42,7 +43,7 @@ export const getAllQuartos = async () => {
 };
 
 export const getAllInquilinos = async () => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllInquilinos",
     parameters: [],
   });
@@ -50,7 +51,7 @@ export const getAllInquilinos = async () => {
 };
 
 export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0, anoReferente: "", mesReferente: null }) => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllPagamentos",
     parameters: [
       { name: "page", type: SqlTypes.SmallInt, value: data.pageParam },
@@ -66,15 +67,22 @@ export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0, 
 
 export const getComprovantePdf = async (data: GetComprovantePdf) => {
   const response = await axios.get(
-    `${apiUrl}/api/getBlobImage?imageName=${process.env.NEXT_PUBLIC_ENVIRONMENT}/inquilino-${data.inquilinoId}/pagamento-${data.pagamentoId}.pdf`,
+    `${apiUrl}/getBlobImage?imageName=${process.env.NEXT_PUBLIC_ENVIRONMENT}/inquilino-${data.inquilinoId}/pagamento-${data.pagamentoId}.pdf`,
     { responseType: "arraybuffer" }
   );
   return response.data;
 };
 
+export const generateDataFromReceipt = async (base64File: string) => {
+  const response = await axios.post(`${apiUrl}/generateFromReceipt`, { base64File });
+
+  console.log(response.data);
+  return JSON.parse(response.data.choices[0].message.content) as GenerateFromReceiptResponse;
+};
+
 //UPDATES
 export const editarValorQuarto = async (editarValorQuartoData: EditarValorQuartoData) => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "EditarValorQuarto",
     parameters: [
       { name: "novoValor", type: SqlTypes.Money, value: editarValorQuartoData.novoValor },
@@ -85,7 +93,7 @@ export const editarValorQuarto = async (editarValorQuartoData: EditarValorQuarto
 };
 
 export const adicionarEditarInquilino = async (adicionarEditarInquilinoData: AdicionarEditarInquilinoData) => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "AdicionarEditarInquilino",
     parameters: [
       { name: "id", type: SqlTypes.Int, value: adicionarEditarInquilinoData.id },
@@ -104,7 +112,7 @@ export const adicionarEditarInquilino = async (adicionarEditarInquilinoData: Adi
 };
 
 export const adicionarEditarPagamento = async (adicionarEditarPagamento: AdicionarEditarPagamento) => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "AdicionarEditarPagamento",
     parameters: [
       { name: "id", type: SqlTypes.Int, value: adicionarEditarPagamento.id },
@@ -120,9 +128,9 @@ export const adicionarEditarPagamento = async (adicionarEditarPagamento: Adicion
 };
 
 export const adicionarEditarComprovante = async (data: AdicionarEditarComprovante) => {
-  const responseFromBlob = await axios.post("/api/postBlobImage", data);
+  const responseFromBlob = await axios.post(`${apiUrl}/postBlobImage`, data);
 
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "AdicionarEditarComprovante",
     parameters: [
       { name: "pagamentoId", type: SqlTypes.Int, value: data.pagamento.Id },
@@ -137,7 +145,7 @@ export const adicionarEditarComprovante = async (data: AdicionarEditarComprovant
 };
 
 export const excluirInquilino = async (id: number) => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "ExcluirInquilino",
     parameters: [{ name: "id", type: SqlTypes.Int, value: id }],
   });
@@ -145,9 +153,18 @@ export const excluirInquilino = async (id: number) => {
 };
 
 export const excluirPagamento = async (id: number) => {
-  const response = await axios.post(`${apiUrl}/api/executeProc`, {
+  const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "ExcluirPagamento",
     parameters: [{ name: "id", type: SqlTypes.Int, value: id }],
   });
   return response;
+};
+
+export const getJpegFromPdf = async (base64Pdf: string) => {
+  try {
+    const response = await axios.post(`${apiUrl}/pdfToJpeg`, { base64Pdf });
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
 };

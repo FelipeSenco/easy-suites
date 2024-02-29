@@ -7,6 +7,7 @@ import {
   editarValorQuarto,
   excluirInquilino,
   excluirPagamento,
+  generateDataFromReceipt,
   getAllBeneficiarios,
   getAllInquilinos,
   getAllPagamentos,
@@ -122,6 +123,17 @@ export const useGetAllPagamentos = (params: useGetAllPagamentosParams) => {
     refetch,
     fetchNextPage,
   };
+};
+
+export const useGenerateFromReceipt = (base64File: string) => {
+  const { data, isLoading, isError, error } = useQuery(["generated-payment"], {
+    queryFn: () => generateDataFromReceipt(base64File),
+    enabled: !!base64File,
+    initialData: null,
+    retry: false,
+  });
+
+  return { data, isLoading, isError, error };
 };
 
 export const useEditarValorQuarto = () => {

@@ -40,3 +40,4 @@ export type AdicionarEditarPagamento = {
 export type AdicionarEditarComprovante = { imageBase64: string; pagamento: Pagamento };
 
 export type GetComprovantePdf = { inquilinoId: number; pagamentoId: number };
+export type GenerateFromReceiptResponse = { dataPagamento: Date; valorPago: number; nomePagador: string };

@@ -9,7 +9,7 @@ import MesSelect from "./Shared/MesSelect";
 import AnoSelect from "./Shared/AnoSelect";
 import { Meses, formatDateToDDMMMYYYY } from "@/app/utils";
 import { ExcluirConfirma } from "./Shared/ExcluirConfirma";
-import { ComprovanteForm } from "./Comprovantes";
+import { ComprovanteForm, GenerateFromReceiptForm } from "./Comprovantes";
 import IntersectionObserverContainer from "./Shared/IntersectionObserverContainer";
 import { PropriedadeSelect } from "./Shared/PropriedadeSelect";
 import { BeneficiarioSelect } from "./Shared/BeneficiarioSelect";
@@ -28,6 +28,7 @@ export const Pagamentos: FC = () => {
   const [pagamentoExcluir, setPagamentoExcluir] = useState<Pagamento>(null);
   const [editarComprovanteOpen, setEditarComprovanteOpen] = useState(false);
   const [observacaoOpen, setObservacaoOpen] = useState(false);
+  const [generateFromReceiptOpen, setGenerateFomReceiptOpen] = useState(false);
 
   const onCancel = () => {
     setAdicionarEditarPagamentoOpen(false);
@@ -69,6 +70,9 @@ export const Pagamentos: FC = () => {
           className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg py-2 px-8 rounded"
         >
           Adicionar
+        </button>
+        <button onClick={() => setGenerateFomReceiptOpen(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg py-2 px-8 rounded">
+          Gerar por recibo
         </button>
       </div>
 
@@ -192,6 +196,9 @@ export const Pagamentos: FC = () => {
             Fechar
           </button>
         </div>
+      </HostModal>
+      <HostModal onRequestClose={() => setGenerateFomReceiptOpen(false)} isOpen={generateFromReceiptOpen}>
+        <GenerateFromReceiptForm setOpen={setGenerateFomReceiptOpen} />
       </HostModal>
     </>
   );
