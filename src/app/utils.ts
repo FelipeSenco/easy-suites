@@ -47,3 +47,17 @@ export function formatDateToDDMMMYYYY(date: Date) {
 
   return [day, month, year].join(" ");
 }
+export function parseDateString(dateStr: string) {
+  // Assuming dateStr is in "dd/mm/yyyy" format
+  const parts = dateStr.split("/"); // Split the string into parts
+
+  if (parts.length === 3) {
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Subtract 1 because months are 0-indexed
+    const year = parseInt(parts[2], 10);
+
+    return new Date(year, month, day); // Create a new Date object
+  } else {
+    throw new Error("Invalid date format");
+  }
+}

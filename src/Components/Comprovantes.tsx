@@ -1,13 +1,16 @@
-import { useAdicionarEditarComprovante, useGenerateFromReceipt } from "@/EasySuitesApi/EasySuitesQueries";
+import { useAdicionarEditarComprovante, useAdicionarEditarPagamento, useGenerateFromReceipt, useGetAllInquilinos } from "@/EasySuitesApi/EasySuitesQueries";
 import { Pagamento } from "@/types/Pagamento";
 import React, { ChangeEvent, FC, FormEvent, SetStateAction, useEffect, useState } from "react";
 import HostModal from "./Shared/HostModal";
 import { ExcluirConfirma } from "./Shared/ExcluirConfirma";
-import { getComprovantePdf, getJpegFromPdf } from "@/EasySuitesApi/EasySuitesApi";
+import { getJpegFromPdf } from "@/EasySuitesApi/EasySuitesApi";
 import { ButtonCancelarConfirmar } from "./Shared/ButtonCancelarConfirmar";
 import AnoSelect from "./Shared/AnoSelect";
 import MesSelect from "./Shared/MesSelect";
 import { useQueryClient } from "react-query";
+import { ratio } from "fuzzball";
+import { Inquilino } from "@/types/Inquilino";
+import { parseDateString } from "@/app/utils";
 
 type ComprovanteFormProps = {
   onCancel: () => void;
@@ -160,25 +163,80 @@ export const GenerateFromReceiptForm: FC<GenerateFromReceiptFormProps> = ({ setO
         }}
         isOpen={showGeneratedResultModal}
       >
-        <GenerateResult setOpen={setShowGeneratedResultModal} base64File={base64File} />
+        <GenerateResult setOpen={setShowGeneratedResultModal} base64Image={base64File} setParentModalOpen={setOpen} />
       </HostModal>
     </>
   );
 };
 
 type GenerateResultProps = {
-  base64File: string;
+  base64Image: string;
   setOpen: React.Dispatch<SetStateAction<boolean>>;
+  setParentModalOpen: React.Dispatch<SetStateAction<boolean>>;
 };
 
-export const GenerateResult: FC<GenerateResultProps> = ({ base64File, setOpen }) => {
-  const { data, isLoading, isError, error } = useGenerateFromReceipt(base64File);
+export const GenerateResult: FC<GenerateResultProps> = ({ base64Image, setOpen, setParentModalOpen }) => {
+  const { data, isLoading, isError, error } = useGenerateFromReceipt(base64Image);
+  //FOR TESTING WITHOUT SPENDING OPEN AI CREDITS
+  // {
+  //   data: { dataPagamento: "12/03/2024", valorPago: 2000.55, nomePagador: "mock name here" },
+  //   isLoading: false,
+  //   isError: false,
+  //   error: { message: "test error" },
+  // };
+  const {
+    mutateAsync: adicionarPagamento,
+    isLoading: isAdcionarPagametoLoading,
+    isError: isAdcionarPagametoError,
+    error: adicionarPagamentoError,
+  } = useAdicionarEditarPagamento();
+  const {
+    mutateAsync: adicionarComprovante,
+    isLoading: isAdcionarComprovanteLoading,
+    isError: isAdcionarComprovanteError,
+    error: adicionarComprovanteError,
+  } = useAdicionarEditarComprovante();
   const queryClient = useQueryClient();
+  const { data: inquilinos } = useGetAllInquilinos();
   const [anoReferente, setAnoReferente] = useState(null);
   const [mesReferente, setMesReferente] = useState(null);
+  const [inquilinoDb, setInquilinoDb] = useState<Inquilino>(null);
+  const [inquilinoError, setInquilinoError] = useState(false);
 
-  const onSubmit = (e: FormEvent) => {
+  useEffect(() => {
+    if (!!data && !!inquilinos) {
+      const tempTenant = inquilinos.find((tenant) => {
+        const score = ratio(tenant.Nome, data?.nomePagador); // fuzzball ratio for fuzzing matching the name string as it can be different from the receipt and the db
+        return score > 59;
+      });
+
+      if (!tempTenant) {
+        setInquilinoError(true);
+        setInquilinoDb(null);
+      } else {
+        setInquilinoError(false);
+        setInquilinoDb(tempTenant);
+      }
+    }
+  }, [inquilinos, data]);
+
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    const result = await adicionarPagamento({
+      inquilinoId: inquilinoDb.Id,
+      valor: data.valorPago,
+      dataPagamento: parseDateString(data.dataPagamento),
+      mesReferente: mesReferente,
+      anoReferente: anoReferente,
+    });
+
+    if (!isAdcionarPagametoError) {
+      await adicionarComprovante({ imageBase64: base64Image, pagamento: result });
+      if (!isAdcionarComprovanteError) {
+        setParentModalOpen(false);
+        onClose();
+      }
+    }
   };
 
   const onClose = () => {
@@ -194,7 +252,8 @@ export const GenerateResult: FC<GenerateResultProps> = ({ base64File, setOpen })
     <form onSubmit={onSubmit} className="flex flex-col gap-3 p-3" style={{ maxHeight: "600px", maxWidth: "1000px" }}>
       <div className="flex flex-col">
         <label className="text-gray-700 font-bold mb-1">Nome</label>
-        <p>{data?.nomePagador}</p>
+        <p>{inquilinoDb?.Nome || `${data?.nomePagador} (nome no comprovante)`}</p>
+        {inquilinoError && <p className="text-red-400">Inquilino não registrado ou com nome registrado muito diferente do comprovante</p>}
       </div>
       <div className="flex flex-col">
         <label className="text-gray-700 font-bold mb-1">Valor</label>
@@ -202,14 +261,18 @@ export const GenerateResult: FC<GenerateResultProps> = ({ base64File, setOpen })
       </div>
       <div className="flex flex-col">
         <label className="text-gray-700 font-bold mb-1">Data do Pagamento</label>
-        <p>{data?.dataPagamento?.toString()}</p>
+        <p>{data?.dataPagamento}</p>
       </div>
       <div className="flex gap-5">
         <AnoSelect ano={anoReferente} onChange={(e) => setAnoReferente(e.target.value)} required={true} />
         <MesSelect mes={mesReferente} setMes={setMesReferente} required={true} />
       </div>
-      <ButtonCancelarConfirmar onCancel={onClose} />
-      {isError && <div>Ocorreu um erro: {(error as Error).message}</div>}
+      <ButtonCancelarConfirmar onCancel={onClose} confirmarDisabled={inquilinoError} />
+      {isError && <p className="text-red-400">Ocorreu um erro no gpt: {(error as Error).message}</p>}
+      {isAdcionarPagametoError && <p className="text-red-400">Ocorreu um erro ao tentar adicionar o pagamento: {(adicionarPagamentoError as Error).message}</p>}
+      {isAdcionarComprovanteError && (
+        <p className="text-red-400">Ocorreu um erro ao tentar adicionar o comprovante: {(adicionarComprovanteError as Error).message}</p>
+      )}
     </form>
   );
 };

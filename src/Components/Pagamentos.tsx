@@ -186,8 +186,20 @@ export const Pagamentos: FC = () => {
           error={deleteError}
         />
       </HostModal>
-      <HostModal isOpen={editarComprovanteOpen} onRequestClose={() => {setEditarComprovanteOpen(false);setPagamentoAtual(null)}}>
-        <ComprovanteForm onCancel={() => {setEditarComprovanteOpen(false);setPagamentoAtual(null)}} pagamento={pagamentoAtual} />
+      <HostModal
+        isOpen={editarComprovanteOpen}
+        onRequestClose={() => {
+          setEditarComprovanteOpen(false);
+          setPagamentoAtual(null);
+        }}
+      >
+        <ComprovanteForm
+          onCancel={() => {
+            setEditarComprovanteOpen(false);
+            setPagamentoAtual(null);
+          }}
+          pagamento={pagamentoAtual}
+        />
       </HostModal>
       <HostModal isOpen={observacaoOpen} onRequestClose={onCloseObservacao}>
         <div className="flex flex-col justify-between items-center h-48">

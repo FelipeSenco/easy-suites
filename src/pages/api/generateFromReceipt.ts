@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     "dataPagamento": "{Extract the payment date in the format DD/MM/YYYY or null if unavailable}",
     "nomePagador": "{Extract the payer's name or null if unavailable}",
     "valorPago": "{Extract the amount paid, formatted as a number with two decimal places, or null if unavailable}"
-    You response should be ONLY the json
+    You response should be ONLY the JSON, and make sure it is a VALID JSON
   }`,
           },
           {

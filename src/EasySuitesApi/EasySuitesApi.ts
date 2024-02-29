@@ -65,19 +65,10 @@ export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0, 
   return response.data as Pagamento[];
 };
 
-export const getComprovantePdf = async (data: GetComprovantePdf) => {
-  const response = await axios.get(
-    `${apiUrl}/getBlobImage?imageName=${process.env.NEXT_PUBLIC_ENVIRONMENT}/inquilino-${data.inquilinoId}/pagamento-${data.pagamentoId}.pdf`,
-    { responseType: "arraybuffer" }
-  );
-  return response.data;
-};
-
 export const generateDataFromReceipt = async (base64File: string) => {
   const response = await axios.post(`${apiUrl}/generateFromReceipt`, { base64File });
 
-  console.log(response.data);
-  return JSON.parse(response.data.choices[0].message.content) as GenerateFromReceiptResponse;
+  return JSON.parse((response.data.choices[0].message.content as string).replace("```json\n", "").replace("\n```", "")) as GenerateFromReceiptResponse;
 };
 
 //UPDATES
@@ -124,7 +115,7 @@ export const adicionarEditarPagamento = async (adicionarEditarPagamento: Adicion
       { name: "observacao", type: SqlTypes.Varchar, value: !!adicionarEditarPagamento.observacao ? adicionarEditarPagamento.observacao : null },
     ],
   });
-  return response.data[0] as Inquilino;
+  return response.data[0] as Pagamento;
 };
 
 export const adicionarEditarComprovante = async (data: AdicionarEditarComprovante) => {
