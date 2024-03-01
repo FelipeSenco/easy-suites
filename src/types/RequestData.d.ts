@@ -1,6 +1,6 @@
-import { Pagamento } from "./Pagamento";
+import { Pagamento } from "./Payment";
 
-export type GetAllPagamentos = {
+export type GetAllPaymentsData = {
   pageParam: number;
   anoReferente: string;
   mesReferente: number;
@@ -9,12 +9,12 @@ export type GetAllPagamentos = {
   beneficiarioId?: number;
 };
 
-export type EditarValorQuartoData = {
+export type EditRoomValueData = {
   novoValor: number;
   quartoId: number;
 };
 
-export type AdicionarEditarInquilinoData = {
+export type AddEditTenantData = {
   id?: number;
   quartoId?: number;
   propriedadeId: number;
@@ -27,7 +27,7 @@ export type AdicionarEditarInquilinoData = {
   telefone?: string;
 };
 
-export type AdicionarEditarPagamento = {
+export type AddEditPaymentData = {
   id?: number;
   inquilinoId: number;
   valor: number;
@@ -37,7 +37,6 @@ export type AdicionarEditarPagamento = {
   observacao?: string;
 };
 
-export type AdicionarEditarComprovante = { imageBase64: string; pagamento: Pagamento };
+export type AddEditReceiptData = { imageBase64: string; pagamento: Pagamento };
 
-export type GetComprovantePdf = { inquilinoId: number; pagamentoId: number };
 export type GenerateFromReceiptResponse = { dataPagamento: string; valorPago: number; nomePagador: string };

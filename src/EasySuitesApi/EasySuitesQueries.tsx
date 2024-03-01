@@ -1,31 +1,31 @@
 "use client";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
 import {
-  adicionarEditarComprovante,
-  adicionarEditarInquilino,
-  adicionarEditarPagamento,
-  editarValorQuarto,
-  excluirInquilino,
-  excluirPagamento,
+  addEditPayment,
+  addEditReceipt,
+  addEditTenant,
+  deletePayment,
+  deleteTenant,
+  editRoomValue,
   generateDataFromReceipt,
-  getAllBeneficiarios,
-  getAllInquilinos,
-  getAllPagamentos,
-  getAllPropriedades,
-  getAllQuartos,
+  getAllBeneficiaries,
+  getAllPayments,
+  getAllProperties,
+  getAllRooms,
+  getAllTenants,
 } from "./EasySuitesApi";
-import { Quarto } from "@/types/Quarto";
-import { Inquilino } from "@/types/Inquilino";
-import { Pagamento } from "@/types/Pagamento";
+import { Room } from "@/types/Room";
+import { Tenant } from "@/types/Tenant";
+import { Payment } from "@/types/Payment";
 
-export const useGetAllPropriedades = (enabled = false) => {
+export const useGetAllProperties = (enabled = false) => {
   const queryClient = useQueryClient();
   const currentData = queryClient.getQueryData(["propriedades"]) as [];
 
   const fetchEnabled = enabled || !currentData;
 
   const { data, isLoading, isError } = useQuery(["propriedades"], {
-    queryFn: getAllPropriedades,
+    queryFn: getAllProperties,
     enabled: fetchEnabled,
     initialData: [],
   });
@@ -33,14 +33,14 @@ export const useGetAllPropriedades = (enabled = false) => {
   return { data, isLoading, isError };
 };
 
-export const useGetAllBeneficiarios = (enabled = false) => {
+export const useGetAllBeneficiaries = (enabled = false) => {
   const queryClient = useQueryClient();
   const currentData = queryClient.getQueryData(["beneficiarios"]) as [];
 
   const fetchEnabled = enabled || !currentData;
 
   const { data, isLoading, isError } = useQuery(["beneficiarios"], {
-    queryFn: getAllBeneficiarios,
+    queryFn: getAllBeneficiaries,
     enabled: fetchEnabled,
     initialData: [],
   });
@@ -48,14 +48,14 @@ export const useGetAllBeneficiarios = (enabled = false) => {
   return { data, isLoading, isError };
 };
 
-export const useGetAllQuartos = (enabled = false) => {
+export const useGetAllRooms = (enabled = false) => {
   const queryClient = useQueryClient();
   const currentData = queryClient.getQueryData(["quartos"]) as [];
 
   const fetchEnabled = enabled || !currentData;
 
   const { data, isLoading, isError } = useQuery(["quartos"], {
-    queryFn: getAllQuartos,
+    queryFn: getAllRooms,
     enabled: fetchEnabled,
     initialData: [],
   });
@@ -63,14 +63,14 @@ export const useGetAllQuartos = (enabled = false) => {
   return { data, isLoading, isError };
 };
 
-export const useGetAllInquilinos = (enabled = false) => {
+export const useGetAllTenants = (enabled = false) => {
   const queryClient = useQueryClient();
   const currentData = queryClient.getQueryData(["inquilinos"]) as [];
 
   const fetchEnabled = enabled || !currentData;
 
   const { data, isLoading, isError } = useQuery(["inquilinos"], {
-    queryFn: getAllInquilinos,
+    queryFn: getAllTenants,
     enabled: fetchEnabled,
     initialData: [],
   });
@@ -78,7 +78,7 @@ export const useGetAllInquilinos = (enabled = false) => {
   return { data, isLoading, isError };
 };
 
-type useGetAllPagamentosParams = {
+type useGetAllPaymentsParams = {
   anoReferente?: string;
   mesReferente?: number;
   enabled?: boolean;
@@ -87,15 +87,15 @@ type useGetAllPagamentosParams = {
   beneficiarioId?: number;
 };
 
-export const useGetAllPagamentos = (params: useGetAllPagamentosParams) => {
+export const useGetAllPayments = (params: useGetAllPaymentsParams) => {
   const queryClient = useQueryClient();
   const currentData = queryClient.getQueryData(["pagamentos"]) as [];
   const fetchEnabled = params.enabled || !currentData;
 
-  const { data, isError, isFetching, isFetchingNextPage, refetch, fetchNextPage } = useInfiniteQuery(
+  const { data, isError, isFetching, isFetchingNextPage, refetch, fetchNextPage, isLoading } = useInfiniteQuery(
     ["pagamentos"],
     async ({ pageParam = 0 }) =>
-      getAllPagamentos({
+      getAllPayments({
         pageParam,
         mesReferente: params.mesReferente,
         anoReferente: params.anoReferente,
@@ -136,15 +136,15 @@ export const useGenerateFromReceipt = (base64File: string) => {
   return { data, isLoading, isError, error };
 };
 
-export const useEditarValorQuarto = () => {
+export const useEditRoomValue = () => {
   const queryClient = useQueryClient();
 
-  return useMutation(editarValorQuarto, {
+  return useMutation(editRoomValue, {
     onError: (error: Error) => {
       console.log(error);
     },
     onSuccess: (data, args, context) => {
-      const currentData = queryClient.getQueryData(["quartos"]) as Quarto[];
+      const currentData = queryClient.getQueryData(["quartos"]) as Room[];
 
       queryClient.setQueryData(
         ["quartos"],
@@ -154,15 +154,15 @@ export const useEditarValorQuarto = () => {
   });
 };
 
-export const useAdicionarEditarInquilino = () => {
+export const useAddEditTenant = () => {
   const queryClient = useQueryClient();
 
-  return useMutation(adicionarEditarInquilino, {
+  return useMutation(addEditTenant, {
     onError: (error: Error) => {
       console.log(error);
     },
     onSuccess: (data, args, context) => {
-      const currentData = queryClient.getQueryData(["inquilinos"]) as Inquilino[];
+      const currentData = queryClient.getQueryData(["inquilinos"]) as Tenant[];
 
       if (args.id) {
         queryClient.setQueryData(
@@ -176,10 +176,10 @@ export const useAdicionarEditarInquilino = () => {
   });
 };
 
-export const useAdicionarEditarPagamento = () => {
+export const useAddEditPayment = () => {
   const queryClient = useQueryClient();
 
-  return useMutation(adicionarEditarPagamento, {
+  return useMutation(addEditPayment, {
     onError: (error: Error) => {
       console.log(error);
     },
@@ -192,7 +192,7 @@ export const useAdicionarEditarPagamento = () => {
         if (args.id) {
           return {
             ...oldQueryData,
-            pages: pages.map((page: Pagamento[]) => page.map((pagamento) => (pagamento.Id === args.id ? { ...pagamento, ...data } : pagamento))),
+            pages: pages.map((page: Payment[]) => page.map((payment) => (payment.Id === args.id ? { ...payment, ...data } : payment))),
           };
         }
 
@@ -201,7 +201,7 @@ export const useAdicionarEditarPagamento = () => {
           const [firstPage, ...rest] = pages;
 
           // Filter out any pagamento with null Id and matching InquilinoId from the first page
-          const filteredFirstPage = firstPage.filter((pagamento: Pagamento) => !(pagamento.Id === null && pagamento.InquilinoId === args.inquilinoId));
+          const filteredFirstPage = firstPage.filter((payment: Payment) => !(payment.Id === null && payment.InquilinoId === args.inquilinoId));
 
           return {
             ...oldQueryData,
@@ -213,51 +213,49 @@ export const useAdicionarEditarPagamento = () => {
   });
 };
 
-export const useExcluirInquilino = () => {
+export const useDeleteTenant = () => {
   const queryClient = useQueryClient();
 
-  return useMutation(excluirInquilino, {
+  return useMutation(deleteTenant, {
     onError: (error: Error) => {
       console.log(error);
     },
     onSuccess: (data, args, context) => {
-      const currentData = queryClient.getQueryData(["inquilinos"]) as Inquilino[];
+      const currentData = queryClient.getQueryData(["inquilinos"]) as Tenant[];
 
       queryClient.setQueryData(
         ["inquilinos"],
-        currentData.filter((inquilino) => inquilino.Id !== args)
+        currentData.filter((tenant) => tenant.Id !== args)
       );
     },
   });
 };
 
-export const useExcluirPagamento = () => {
+export const useDeletePayment = () => {
   const queryClient = useQueryClient();
 
-  return useMutation(excluirPagamento, {
+  return useMutation(deletePayment, {
     onError: (error: Error) => {
       console.log(error);
     },
     onSuccess: (data, args, context) => {
-      const currentData = queryClient.getQueryData(["pagamentos"]) as Pagamento[];
-
       queryClient.setQueryData(["pagamentos"], (oldQueryData: any) => {
         // Ensuring oldQueryData is treated as the paginated structure it is
         const pages = oldQueryData?.pages ?? [];
 
         return {
           ...oldQueryData,
-          pages: pages.map((page: Pagamento[]) => page.filter((pagamento) => pagamento.Id !== args)),
+          pages: pages.map((page: Payment[]) => page.filter((payment) => payment.Id !== args)),
         };
       });
     },
   });
 };
 
-export const useAdicionarEditarComprovante = () => {
+export const useAddEditReceipt = () => {
   const queryClient = useQueryClient();
 
-  return useMutation(adicionarEditarComprovante, {
+  return useMutation(addEditReceipt, {
     onError: (error: Error) => {
       console.log(error);
     },
@@ -268,8 +266,8 @@ export const useAdicionarEditarComprovante = () => {
 
         return {
           ...oldQueryData,
-          pages: pages.map((page: Pagamento[]) =>
-            page.map((pagamento) => (pagamento.Id === args.pagamento.Id ? { ...pagamento, ComprovanteUrl: data?.url } : pagamento))
+          pages: pages.map((page: Payment[]) =>
+            page.map((payment) => (payment.Id === args.pagamento.Id ? { ...payment, ComprovanteUrl: data?.url } : payment))
           ),
         };
       });

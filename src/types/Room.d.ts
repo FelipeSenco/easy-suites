@@ -1,4 +1,4 @@
-export type Quarto = {
+export type Room = {
   Id: number;
   PropriedadeId: number;
   PropriedadeNome: string;

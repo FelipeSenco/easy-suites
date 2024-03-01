@@ -1,4 +1,4 @@
-import { Pagamento } from "@/types/Pagamento";
+import { Payment } from "@/types/Payment";
 import { BlobServiceClient } from "@azure/storage-blob";
 
 export class BlobStorageService {
@@ -20,7 +20,7 @@ export class BlobStorageService {
     return { blobReadableStream, blobSize };
   }
 
-  async postBlobFile(fileData: string, pagamento: Pagamento, mimeType: string, blobExtension: string) {
+  async postBlobFile(fileData: string, pagamento: Payment, mimeType: string, blobExtension: string) {
     const blobName = `${this.environment}/inquilino-${pagamento.InquilinoId}/pagamento-${pagamento.Id}.${blobExtension}`;
     const containerClient = this.client.getContainerClient("easysuites");
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);

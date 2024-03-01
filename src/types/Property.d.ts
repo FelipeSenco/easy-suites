@@ -1,4 +1,4 @@
-export type Propriedade = {
+export type Property = {
   Cidade: string;
   Estado: string;
   Id: number;

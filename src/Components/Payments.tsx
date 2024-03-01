@@ -1,74 +1,78 @@
 "use client";
 import { FC, FormEvent, useState } from "react";
 import HostModal from "./Shared/HostModal";
-import { Pagamento } from "@/types/Pagamento";
-import { ButtonCancelarConfirmar } from "./Shared/ButtonCancelarConfirmar";
-import { useAdicionarEditarPagamento, useExcluirPagamento, useGetAllPagamentos } from "@/EasySuitesApi/EasySuitesQueries";
-import { InquilinoSelect } from "./Shared/InquilinoSelect";
-import MesSelect from "./Shared/MesSelect";
-import AnoSelect from "./Shared/AnoSelect";
-import { Meses, formatDateToDDMMMYYYY } from "@/app/utils";
-import { ExcluirConfirma } from "./Shared/ExcluirConfirma";
-import { ComprovanteForm, GenerateFromReceiptForm } from "./Comprovantes";
+import { Payment } from "@/types/Payment";
+import { ConfirmCancelButtons } from "./Shared/ConfirmCancelButtons";
+import { TenantSelect } from "./Shared/TenantSelect";
+import { MonthSelect } from "./Shared/MonthSelect";
+import YearSelect from "./Shared/YearSelect";
+import { Months, formatDateToDDMMMYYYY } from "@/app/utils";
+import { DeleteConfirm } from "./Shared/DeleteConfirm";
+import { ReceiptForm, GenerateFromReceiptForm } from "./Receipts";
 import IntersectionObserverContainer from "./Shared/IntersectionObserverContainer";
-import { PropriedadeSelect } from "./Shared/PropriedadeSelect";
-import { BeneficiarioSelect } from "./Shared/BeneficiarioSelect";
+import { PropertySelect } from "./Shared/PropertySelect";
+import { BeneficiarySelect } from "./Shared/BeneficiarySelect";
+import SelectYear from "./Shared/YearSelect";
+import { useAddEditPayment, useDeletePayment, useGetAllPayments } from "@/EasySuitesApi/EasySuitesQueries";
 
-export const Pagamentos: FC = () => {
-  const [mesReferente, setMesReferente] = useState(null);
-  const [anoReferente, setAnoReferente] = useState(null);
-  const [propriedadeId, setPropriedadeId] = useState(null);
-  const [inquilinoId, setInquilinoId] = useState(null);
-  const [beneficiarioId, setBeneficiarioId] = useState(null);
-  const { pagamentos, hasNextPage, fetchNextPage, refetch } = useGetAllPagamentos({ anoReferente, mesReferente, inquilinoId, propriedadeId, beneficiarioId });
-  const { mutateAsync: excluirPagamento, isError: isDeleteError, isLoading: isDeleteLoading, error: deleteError } = useExcluirPagamento();
-  const [pagamentoAtual, setPagamentoAtual] = useState(null);
-  const [adicionarEditarPagamentoOpen, setAdicionarEditarPagamentoOpen] = useState(false);
-  const [excluirPagamentoOpen, setExcluirPagamentoOpen] = useState(false);
-  const [pagamentoExcluir, setPagamentoExcluir] = useState<Pagamento>(null);
-  const [editarComprovanteOpen, setEditarComprovanteOpen] = useState(false);
-  const [observacaoOpen, setObservacaoOpen] = useState(false);
+export const Payments: FC = () => {
+  const [referenceMonth, setReferenceMonth] = useState(null);
+  const [referenceYear, setReferenceYear] = useState(null);
+  const [propertyId, setPropertyId] = useState(null);
+  const [tenantId, setTenantId] = useState(null);
+  const [beneficiaryId, setBeneficiaryId] = useState(null);
+  const { pagamentos, hasNextPage, fetchNextPage, refetch } = useGetAllPayments({
+    anoReferente: referenceYear,
+    mesReferente: referenceMonth,
+    inquilinoId: tenantId,
+    propriedadeId: propertyId,
+    beneficiarioId: beneficiaryId,
+  });
+  const { mutateAsync: deletePayment, isError: isDeleteError, isLoading: isDeleteLoading, error: deleteError } = useDeletePayment();
+  const [currentPayment, setCurrentPayment] = useState(null);
+  const [addEditPaymentOpen, setAddEditPaymentOpen] = useState(false);
+  const [deletePaymentOpen, setDeletePaymentOpen] = useState(false);
+  const [paymentDelete, setPaymentDelete] = useState<Payment>(null);
+  const [editReceiptOpen, setEditReceiptOpen] = useState(false);
+  const [observationOpen, setObservationOpen] = useState(false);
   const [generateFromReceiptOpen, setGenerateFomReceiptOpen] = useState(false);
 
   const onCancel = () => {
-    setAdicionarEditarPagamentoOpen(false);
-    setPagamentoAtual(null);
+    setAddEditPaymentOpen(false);
+    setCurrentPayment(null);
   };
 
-  const onCloseObservacao = () => {
-    setObservacaoOpen(false);
-    setPagamentoAtual(null);
+  const onCloseObservation = () => {
+    setObservationOpen(false);
+    setCurrentPayment(null);
   };
 
-  const onChangeAno = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const onChangeYear = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (!e.target.value) {
-      setMesReferente(null);
+      setReferenceMonth(null);
     }
-    setAnoReferente(e.target.value);
+    setReferenceYear(e.target.value);
   };
 
-  const onChangePropriedade = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setInquilinoId(null);
-    setPropriedadeId(e.target.value ? Number(e.target.value) : null);
+  const onChangeProperty = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTenantId(null);
+    setPropertyId(e.target.value ? Number(e.target.value) : null);
   };
 
   return (
     <>
       <div className="flex flex-row items-end justify-between mt-5 px-4 rounded p-absolute">
         <div className="flex items-end gap-5 w-3/4">
-          <AnoSelect ano={anoReferente} onChange={onChangeAno} />
-          {anoReferente && <MesSelect mes={mesReferente} setMes={setMesReferente} />}
-          <PropriedadeSelect propriedadeId={propriedadeId} onChange={onChangePropriedade} />
-          <InquilinoSelect inquilinoId={inquilinoId} setInquilinoId={setInquilinoId} propriedadeId={propriedadeId} />
-          <BeneficiarioSelect beneficiarioId={beneficiarioId} setBeneficiarioId={setBeneficiarioId} />
+          <SelectYear year={referenceYear} onChange={onChangeYear} />
+          {referenceYear && <MonthSelect month={referenceMonth} setMonth={setReferenceMonth} />}
+          <PropertySelect propertyId={propertyId} onChange={onChangeProperty} />
+          <TenantSelect tenantId={tenantId} setTenantId={setTenantId} propertyId={propertyId} />
+          <BeneficiarySelect beneficiaryId={beneficiaryId} setBeneficiaryId={setBeneficiaryId} />
           <button onClick={() => refetch()} className="bg-purple-500 hover:bg-purple-700 text-white h-1/2 font-bold text-lg py-2 px-8 rounded">
             Filtrar
           </button>
         </div>
-        <button
-          onClick={() => setAdicionarEditarPagamentoOpen(true)}
-          className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg py-2 px-8 rounded"
-        >
+        <button onClick={() => setAddEditPaymentOpen(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg py-2 px-8 rounded">
           Adicionar
         </button>
         <button onClick={() => setGenerateFomReceiptOpen(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg py-2 px-8 rounded">
@@ -102,7 +106,7 @@ export const Pagamentos: FC = () => {
                 <td className="border border-gray-300 p-2">{p.NumeroQuarto}</td>
                 <td className="border border-gray-300 p-2">R$ {p.Valor}</td>
                 <td className="border border-gray-300 p-2">{formatDateToDDMMMYYYY(p.DataPagamento)}</td>
-                <td className="border border-gray-300 p-2">{Object.keys(Meses).find((key) => Meses[key] === p.MesReferente)}</td>
+                <td className="border border-gray-300 p-2">{Object.keys(Months).find((key) => Months[key] === p.MesReferente)}</td>
                 <td className="border border-gray-300 p-2">{p.AnoReferente}</td>
                 <td className="border border-gray-300 p-2">{p.BeneficiarioNome}</td>
                 <td className="border border-gray-300 p-2">
@@ -110,8 +114,8 @@ export const Pagamentos: FC = () => {
                     className={"font-bold py-1 px-2 rounded hover:bg-gray-300"}
                     style={!p.ComprovanteUrl ? { color: "red" } : { color: "green" }}
                     onClick={() => {
-                      setPagamentoAtual(p);
-                      setEditarComprovanteOpen(true);
+                      setCurrentPayment(p);
+                      setEditReceiptOpen(true);
                     }}
                     disabled={!p.Id}
                   >
@@ -124,8 +128,8 @@ export const Pagamentos: FC = () => {
                     className={"font-bold py-1 px-2 text-blue-500 rounded hover:bg-blue-300"}
                     onClick={() => {
                       console.log(p);
-                      setPagamentoAtual(p);
-                      setObservacaoOpen(true);
+                      setCurrentPayment(p);
+                      setObservationOpen(true);
                     }}
                   >
                     {p.Observacao ? "Observação" : "Sem Observação"}
@@ -135,8 +139,8 @@ export const Pagamentos: FC = () => {
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
                     onClick={() => {
-                      setPagamentoAtual(p);
-                      setAdicionarEditarPagamentoOpen(true);
+                      setCurrentPayment(p);
+                      setAddEditPaymentOpen(true);
                     }}
                   >
                     Editar
@@ -145,8 +149,8 @@ export const Pagamentos: FC = () => {
                 <td className="border border-gray-300 p-2">
                   <button
                     onClick={() => {
-                      setPagamentoExcluir(p);
-                      setExcluirPagamentoOpen(true);
+                      setPaymentDelete(p);
+                      setDeletePaymentOpen(true);
                     }}
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
                   >
@@ -173,38 +177,38 @@ export const Pagamentos: FC = () => {
           Valor Total: <span className="text-blue-700">R$ {pagamentos.reduce((total, pagamento) => total + pagamento.Valor, 0)}</span>
         </p>
       </div>
-      <HostModal isOpen={adicionarEditarPagamentoOpen} onRequestClose={onCancel}>
-        <AdcionarEditarPagamentoForm onCancel={onCancel} pagamento={pagamentoAtual} />
+      <HostModal isOpen={addEditPaymentOpen} onRequestClose={onCancel}>
+        <AddEditPaymentForm onCancel={onCancel} payment={currentPayment} />
       </HostModal>
-      <HostModal isOpen={excluirPagamentoOpen} onRequestClose={() => setExcluirPagamentoOpen(false)}>
-        <ExcluirConfirma
-          onCancel={() => setExcluirPagamentoOpen(false)}
-          onConfirm={() => excluirPagamento(pagamentoExcluir.Id)}
-          mensagem={`Tem certeza que quer excluir o pagamento de '${pagamentoExcluir?.NomeInquilino}'?`}
+      <HostModal isOpen={deletePaymentOpen} onRequestClose={() => setDeletePaymentOpen(false)}>
+        <DeleteConfirm
+          onCancel={() => setDeletePaymentOpen(false)}
+          onConfirm={() => deletePayment(paymentDelete.Id)}
+          message={`Tem certeza que quer excluir o pagamento de '${paymentDelete?.NomeInquilino}'?`}
           isError={isDeleteError}
           isLoading={isDeleteLoading}
           error={deleteError}
         />
       </HostModal>
       <HostModal
-        isOpen={editarComprovanteOpen}
+        isOpen={editReceiptOpen}
         onRequestClose={() => {
-          setEditarComprovanteOpen(false);
-          setPagamentoAtual(null);
+          setEditReceiptOpen(false);
+          setCurrentPayment(null);
         }}
       >
-        <ComprovanteForm
+        <ReceiptForm
           onCancel={() => {
-            setEditarComprovanteOpen(false);
-            setPagamentoAtual(null);
+            setEditReceiptOpen(false);
+            setCurrentPayment(null);
           }}
-          pagamento={pagamentoAtual}
+          payment={currentPayment}
         />
       </HostModal>
-      <HostModal isOpen={observacaoOpen} onRequestClose={onCloseObservacao}>
+      <HostModal isOpen={observationOpen} onRequestClose={onCloseObservation}>
         <div className="flex flex-col justify-between items-center h-48">
-          <textarea disabled className="w-full p-1 h-28 border-2 border-gray-200" value={pagamentoAtual?.Observacao}></textarea>
-          <button onClick={onCloseObservacao} className="bg-gray-500 hover:bg-gray-700 text-white font-bold  py-2 px-6 rounded mb-5">
+          <textarea disabled className="w-full p-1 h-28 border-2 border-gray-200" value={currentPayment?.Observacao}></textarea>
+          <button onClick={onCloseObservation} className="bg-gray-500 hover:bg-gray-700 text-white font-bold  py-2 px-6 rounded mb-5">
             Fechar
           </button>
         </div>
@@ -216,87 +220,95 @@ export const Pagamentos: FC = () => {
   );
 };
 
-type AdcionarEditarPagamentoFormProps = {
+type AddEditPaymentFormProps = {
   onCancel: () => void;
-  pagamento?: Pagamento;
+  payment?: Payment;
 };
 
-const AdcionarEditarPagamentoForm: FC<AdcionarEditarPagamentoFormProps> = ({ onCancel, pagamento }) => {
-  const { mutateAsync: adicionarEditarPagamento, isError, isLoading, error } = useAdicionarEditarPagamento();
-  const [inquilinoId, setInquilinoid] = useState(pagamento?.InquilinoId);
-  const [valor, setValor] = useState(pagamento?.Valor);
-  const [dataPagamento, setDataPagamento] = useState(pagamento?.DataPagamento);
-  const [mesReferente, setMesreferente] = useState(pagamento?.MesReferente || new Date().getMonth() + 1); // +1 here, due to the fact that database months starts at 1 and not 0
-  const [anoReferente, setAnoReferente] = useState(pagamento?.AnoReferente || new Date().getUTCFullYear().toString());
-  const [observacao, setObservacao] = useState(pagamento?.Observacao);
+const AddEditPaymentForm: FC<AddEditPaymentFormProps> = ({ onCancel, payment }) => {
+  const { mutateAsync: addEditPayment, isError, isLoading, error } = useAddEditPayment();
+  const [tenantId, setTenantId] = useState(payment?.InquilinoId);
+  const [value, setValue] = useState(payment?.Valor);
+  const [paymentDate, setPaymentDate] = useState(payment?.DataPagamento);
+  const [referenceMonth, setReferenceMonth] = useState(payment?.MesReferente || new Date().getMonth() + 1); // +1 here, due to the fact that database months starts at 1 and not 0
+  const [referenceYear, setReferenceYear] = useState(payment?.AnoReferente || new Date().getUTCFullYear().toString());
+  const [observation, setObservation] = useState(payment?.Observacao);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await adicionarEditarPagamento({ id: pagamento?.Id, inquilinoId, valor, dataPagamento, mesReferente, anoReferente, observacao });
+    await addEditPayment({
+      id: payment?.Id,
+      inquilinoId: tenantId,
+      valor: value,
+      dataPagamento: paymentDate,
+      mesReferente: referenceMonth,
+      anoReferente: referenceYear,
+      observacao: observation,
+    });
     if (!isError) {
       onCancel();
     }
   };
 
-  const onChangeAno = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setAnoReferente(e.target.value);
+  const onChangeYear = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setReferenceYear(e.target.value);
   };
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col justify-center items-start gap-4 py-2 px-6">
       <div className="flex flex-row justify-between w-full">
-        <InquilinoSelect inquilinoId={inquilinoId} setInquilinoId={setInquilinoid} />
+        <TenantSelect tenantId={tenantId} setTenantId={setTenantId} />
         <div className="flex flex-col">
-          <label htmlFor="pagamento-valor" className="text-gray-700 font-bold mb-1">
+          <label htmlFor="payment-valor" className="text-gray-700 font-bold mb-1">
             Valor
           </label>
           <input
             max={10000}
             min={200}
             type="number"
-            id="pagamento-valor-input"
-            name="pagamento-valor"
+            id="payment-valor-input"
+            name="payment-valor"
             required
             className="border rounded p-2 w-full focus:border-blue-500"
             placeholder="Valor "
-            value={valor || ""}
-            onChange={(e) => setValor(e.target.value ? Number(e.target.value) : 0)}
+            value={value || ""}
+            onChange={(e) => setValue(e.target.value ? Number(e.target.value) : 0)}
           />
         </div>
       </div>
       <div className="flex flex-row w-full justify-between">
         <div className="flex flex-col">
-          <label htmlFor="pagamento-data" className="text-gray-700 font-bold mb-1">
+          <label htmlFor="payment-data" className="text-gray-700 font-bold mb-1">
             Data do Pagamento
           </label>
           <input
             type="date"
             required
-            id="pagamento-data-input"
-            name="pagamento-data"
+            id="payment-data-input"
+            name="payment-data"
             className="border rounded p-2 w-full focus:border-blue-500"
-            value={dataPagamento ? new Date(dataPagamento).toISOString().substring(0, 10) : ""}
-            onChange={(e) => setDataPagamento(e.target.value ? new Date(e.target.value) : null)}
+            value={paymentDate ? new Date(paymentDate).toISOString().substring(0, 10) : ""}
+            onChange={(e) => setPaymentDate(e.target.value ? new Date(e.target.value) : null)}
           />
         </div>
         <div className="flex flex-col">
-          <MesSelect mes={mesReferente} setMes={setMesreferente} />
+          <MonthSelect month={referenceMonth} setMonth={setReferenceMonth} />
         </div>
-        <AnoSelect ano={anoReferente} onChange={onChangeAno} />
+        <YearSelect year={referenceYear} onChange={onChangeYear} />
       </div>
       <div className="flex flex-col w-full">
-        <label htmlFor="pagamento-obeservacao" className="text-gray-700 font-bold mb-1">
+        <label htmlFor="payment-obeservacao" className="text-gray-700 font-bold mb-1">
           Observação
         </label>
         <textarea
-          name="pagamento-obeservacao"
+          name="payment-obeservacao"
           className="w-full p-1 h-28 border-2 border-gray-200"
           maxLength={100}
-          value={observacao}
-          onChange={(e) => setObservacao(e.target.value)}
+          value={observation}
+          onChange={(e) => setObservation(e.target.value)}
         ></textarea>
       </div>
-      <ButtonCancelarConfirmar onCancel={onCancel} />
+      <ConfirmCancelButtons onCancel={onCancel} />
       {isError && !isLoading && <p className="py-5 text-red-500">{error.message}</p>}
     </form>
   );

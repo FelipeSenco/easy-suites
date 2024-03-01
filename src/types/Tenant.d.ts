@@ -1,4 +1,4 @@
-export type Inquilino = {
+export type Tenant = {
   Id: number;
   Nome: string;
   QuartoId?: number;

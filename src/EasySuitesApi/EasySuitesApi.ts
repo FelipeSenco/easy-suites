@@ -1,56 +1,55 @@
 import { SqlTypes } from "@/app/enums/enums";
-import { Beneficario } from "@/types/Beneficiario";
-import { Inquilino } from "@/types/Inquilino";
-import { Pagamento } from "@/types/Pagamento";
-import { Propriedade } from "@/types/Propriedade";
-import { Quarto } from "@/types/Quarto";
-import {
-  AdicionarEditarComprovante,
-  AdicionarEditarInquilinoData,
-  AdicionarEditarPagamento,
-  EditarValorQuartoData,
-  GenerateFromReceiptResponse,
-  GetAllPagamentos,
-  GetComprovantePdf,
-} from "@/types/RequestData";
+import { Beneficary } from "@/types/Beneficiary";
+import { Tenant } from "@/types/Tenant";
+import { Payment } from "@/types/Payment";
+import { Property } from "@/types/Property";
+import { Room } from "@/types/Room";
 import axios from "axios";
+import {
+  AddEditPaymentData,
+  AddEditReceiptData,
+  AddEditTenantData,
+  EditRoomValueData,
+  GenerateFromReceiptResponse,
+  GetAllPaymentsData,
+} from "@/types/RequestData";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 //GETS
-export const getAllPropriedades = async () => {
+export const getAllProperties = async () => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllPropriedades",
     parameters: [],
   });
-  return response.data as Propriedade[];
+  return response.data as Property[];
 };
 
-export const getAllBeneficiarios = async () => {
+export const getAllBeneficiaries = async () => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllBeneficiarios",
     parameters: [],
   });
-  return response.data as Beneficario[];
+  return response.data as Beneficary[];
 };
 
-export const getAllQuartos = async () => {
+export const getAllRooms = async () => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllQuartos",
     parameters: [],
   });
-  return response.data as Quarto[];
+  return response.data as Room[];
 };
 
-export const getAllInquilinos = async () => {
+export const getAllTenants = async () => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllInquilinos",
     parameters: [],
   });
-  return response.data as Inquilino[];
+  return response.data as Tenant[];
 };
 
-export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0, anoReferente: "", mesReferente: null }) => {
+export const getAllPayments = async (data: GetAllPaymentsData = { pageParam: 0, anoReferente: "", mesReferente: null }) => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllPagamentos",
     parameters: [
@@ -62,7 +61,7 @@ export const getAllPagamentos = async (data: GetAllPagamentos = { pageParam: 0, 
       { name: "beneficiarioId", type: SqlTypes.Int, value: !!data.beneficiarioId ? data.beneficiarioId : null },
     ],
   });
-  return response.data as Pagamento[];
+  return response.data as Payment[];
 };
 
 export const generateDataFromReceipt = async (base64File: string) => {
@@ -72,7 +71,7 @@ export const generateDataFromReceipt = async (base64File: string) => {
 };
 
 //UPDATES
-export const editarValorQuarto = async (editarValorQuartoData: EditarValorQuartoData) => {
+export const editRoomValue = async (editarValorQuartoData: EditRoomValueData) => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "EditarValorQuarto",
     parameters: [
@@ -83,7 +82,7 @@ export const editarValorQuarto = async (editarValorQuartoData: EditarValorQuarto
   return response;
 };
 
-export const adicionarEditarInquilino = async (adicionarEditarInquilinoData: AdicionarEditarInquilinoData) => {
+export const addEditTenant = async (adicionarEditarInquilinoData: AddEditTenantData) => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "AdicionarEditarInquilino",
     parameters: [
@@ -99,10 +98,10 @@ export const adicionarEditarInquilino = async (adicionarEditarInquilinoData: Adi
       { name: "telefone", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.telefone },
     ],
   });
-  return response.data[0] as Inquilino;
+  return response.data[0] as Tenant;
 };
 
-export const adicionarEditarPagamento = async (adicionarEditarPagamento: AdicionarEditarPagamento) => {
+export const addEditPayment = async (adicionarEditarPagamento: AddEditPaymentData) => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "AdicionarEditarPagamento",
     parameters: [
@@ -115,10 +114,10 @@ export const adicionarEditarPagamento = async (adicionarEditarPagamento: Adicion
       { name: "observacao", type: SqlTypes.Varchar, value: !!adicionarEditarPagamento.observacao ? adicionarEditarPagamento.observacao : null },
     ],
   });
-  return response.data[0] as Pagamento;
+  return response.data[0] as Payment;
 };
 
-export const adicionarEditarComprovante = async (data: AdicionarEditarComprovante) => {
+export const addEditReceipt = async (data: AddEditReceiptData) => {
   const responseFromBlob = await axios.post(`${apiUrl}/postBlobImage`, data);
 
   const response = await axios.post(`${apiUrl}/executeProc`, {
@@ -135,7 +134,7 @@ export const adicionarEditarComprovante = async (data: AdicionarEditarComprovant
   return response.data[0] as { url: string; message: string };
 };
 
-export const excluirInquilino = async (id: number) => {
+export const deleteTenant = async (id: number) => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "ExcluirInquilino",
     parameters: [{ name: "id", type: SqlTypes.Int, value: id }],
@@ -143,7 +142,7 @@ export const excluirInquilino = async (id: number) => {
   return response;
 };
 
-export const excluirPagamento = async (id: number) => {
+export const deletePayment = async (id: number) => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "ExcluirPagamento",
     parameters: [{ name: "id", type: SqlTypes.Int, value: id }],

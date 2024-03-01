@@ -1,4 +1,4 @@
-export type Beneficario = {
+export type Beneficary = {
   Id: number;
   Nome: string;
   BancoCodigo: number;

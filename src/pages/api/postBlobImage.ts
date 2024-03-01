@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Pagamento } from "@/types/Pagamento";
+import { Payment } from "@/types/Payment";
 import { BlobStorageService } from "@/repository/BlobStorageService";
 
 type UploadRequestBody = {
   imageBase64: string;
-  pagamento: Pagamento;
+  pagamento: Payment;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -1,7 +1,7 @@
 export const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 export const cellPhoneRegex = /^[1-9][0-9][0-9]{9}$/;
 
-export const Meses: Record<string, number> = {
+export const Months: Record<string, number> = {
   Janeiro: 1,
   Fevereiro: 2,
   Março: 3,

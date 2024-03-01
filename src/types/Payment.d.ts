@@ -1,4 +1,4 @@
-export type Pagamento = {
+export type Payment = {
   Id: number;
   NomeInquilino: string;
   InquilinoId: int;

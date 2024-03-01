@@ -1,25 +1,25 @@
-import { useAdicionarEditarComprovante, useAdicionarEditarPagamento, useGenerateFromReceipt, useGetAllInquilinos } from "@/EasySuitesApi/EasySuitesQueries";
-import { Pagamento } from "@/types/Pagamento";
+import { Payment } from "@/types/Payment";
 import React, { ChangeEvent, FC, FormEvent, SetStateAction, useEffect, useState } from "react";
 import HostModal from "./Shared/HostModal";
-import { ExcluirConfirma } from "./Shared/ExcluirConfirma";
+import { DeleteConfirm } from "./Shared/DeleteConfirm";
 import { getJpegFromPdf } from "@/EasySuitesApi/EasySuitesApi";
-import { ButtonCancelarConfirmar } from "./Shared/ButtonCancelarConfirmar";
-import AnoSelect from "./Shared/AnoSelect";
-import MesSelect from "./Shared/MesSelect";
+import { ConfirmCancelButtons } from "./Shared/ConfirmCancelButtons";
+import AnoSelect from "./Shared/YearSelect";
+import MesSelect, { MonthSelect } from "./Shared/MonthSelect";
 import { useQueryClient } from "react-query";
 import { ratio } from "fuzzball";
-import { Inquilino } from "@/types/Inquilino";
+import { Tenant } from "@/types/Tenant";
 import { parseDateString } from "@/app/utils";
+import SelectYear from "./Shared/YearSelect";
+import { useAddEditPayment, useAddEditReceipt, useGenerateFromReceipt, useGetAllTenants } from "@/EasySuitesApi/EasySuitesQueries";
 
-type ComprovanteFormProps = {
+type ReceiptFormProps = {
   onCancel: () => void;
-  pagamento: Pagamento;
+  payment: Payment;
 };
 
-export const ComprovanteForm: FC<ComprovanteFormProps> = ({ onCancel, pagamento }) => {
-  const { mutateAsync: adicionarAtualizarComprovante, isError, isLoading, error } = useAdicionarEditarComprovante();
-
+export const ReceiptForm: FC<ReceiptFormProps> = ({ onCancel, payment }) => {
+  const { mutateAsync: adicionarAtualizarComprovante, isError, isLoading, error } = useAddEditReceipt();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [newReceiptFile, setNewReceiptFile] = useState("");
 
@@ -34,12 +34,12 @@ export const ComprovanteForm: FC<ComprovanteFormProps> = ({ onCancel, pagamento 
   }, [newReceiptFile]);
 
   const onUpdate = async () => {
-    !!newReceiptFile && (await adicionarAtualizarComprovante({ pagamento: pagamento, imageBase64: newReceiptFile }));
+    !!newReceiptFile && (await adicionarAtualizarComprovante({ pagamento: payment, imageBase64: newReceiptFile }));
     !isError && onCancel();
   };
 
   const onDelete = async () => {
-    await adicionarAtualizarComprovante({ pagamento: pagamento, imageBase64: null });
+    await adicionarAtualizarComprovante({ pagamento: payment, imageBase64: null });
     !isError && onCancel();
   };
 
@@ -62,8 +62,8 @@ export const ComprovanteForm: FC<ComprovanteFormProps> = ({ onCancel, pagamento 
   return (
     <div className="flex flex-col justify-center items-center" style={{ maxHeight: "600px", maxWidth: "1000px" }}>
       <div className="flex flex-col justify-between items-center gap-5 overflow-y-auto">
-        <img className="w-1/2 h-1/2" src={newReceiptFile || pagamento?.ComprovanteUrl} alt="No image" />
-        {!pagamento?.ComprovanteUrl && <p>Não existe imagem de recibo associado a esse pagamento.</p>}
+        <img className="w-1/2 h-1/2" src={newReceiptFile || payment?.ComprovanteUrl} alt="No image" />
+        {!payment?.ComprovanteUrl && <p>Não existe imagem de recibo associado a esse payment.</p>}
 
         <div className="flex flex-col bg-gray-200 p-2 ">
           <label htmlFor="receipt" className="text-gray-700 font-bold mb-1">
@@ -78,21 +78,21 @@ export const ComprovanteForm: FC<ComprovanteFormProps> = ({ onCancel, pagamento 
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="bg-red-500 hover:bg-red-700 text-white font-bold text-lg py-2 px-8 rounded mb-5"
-            disabled={!pagamento?.ComprovanteUrl}
+            disabled={!payment?.ComprovanteUrl}
           >
             Deletar
           </button>
           <button onClick={onUpdate} className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-lg py-2 px-8 rounded mb-5" disabled={!newReceiptFile}>
-            {!!pagamento?.ComprovanteUrl ? "Editar" : "Adicionar"}
+            {!!payment?.ComprovanteUrl ? "Editar" : "Adicionar"}
           </button>
         </div>
       </div>
 
       {isError && !isLoading && <p className="py-5 text-red-500">{error.message}</p>}
       <HostModal isOpen={deleteModalOpen} onRequestClose={() => setDeleteModalOpen(false)}>
-        <ExcluirConfirma
+        <DeleteConfirm
           onConfirm={onDelete}
-          mensagem="Tem certeza que quer excluir o comprovante desse pagamento?"
+          message="Tem certeza que quer excluir o comprovante desse pagamento?"
           onCancel={() => setDeleteModalOpen(false)}
           isError={isError}
           isLoading={isLoading}
@@ -153,7 +153,7 @@ export const GenerateFromReceiptForm: FC<GenerateFromReceiptFormProps> = ({ setO
           </label>
           <input required type="file" id="generate-from-receipt" accept="image/png, image/jpeg, application/pdf" onChange={handleFileChange} />
         </div>
-        <ButtonCancelarConfirmar onCancel={() => setOpen(false)} />
+        <ConfirmCancelButtons onCancel={() => setOpen(false)} />
       </form>
 
       <HostModal
@@ -189,45 +189,45 @@ export const GenerateResult: FC<GenerateResultProps> = ({ base64Image, setOpen, 
     isLoading: isAdcionarPagametoLoading,
     isError: isAdcionarPagametoError,
     error: adicionarPagamentoError,
-  } = useAdicionarEditarPagamento();
+  } = useAddEditPayment();
   const {
     mutateAsync: adicionarComprovante,
     isLoading: isAdcionarComprovanteLoading,
     isError: isAdcionarComprovanteError,
     error: adicionarComprovanteError,
-  } = useAdicionarEditarComprovante();
+  } = useAddEditReceipt();
   const queryClient = useQueryClient();
-  const { data: inquilinos } = useGetAllInquilinos();
-  const [anoReferente, setAnoReferente] = useState(null);
-  const [mesReferente, setMesReferente] = useState(null);
-  const [inquilinoDb, setInquilinoDb] = useState<Inquilino>(null);
-  const [inquilinoError, setInquilinoError] = useState(false);
+  const { data: tenants } = useGetAllTenants();
+  const [referenceYear, setReferenceYear] = useState(null);
+  const [referenceMonth, setReferenceMonth] = useState(null);
+  const [tenantDb, setTenantDb] = useState<Tenant>(null);
+  const [tenantError, setTenantError] = useState(false);
 
   useEffect(() => {
-    if (!!data && !!inquilinos) {
-      const tempTenant = inquilinos.find((tenant) => {
+    if (!!data && !!tenants) {
+      const tempTenant = tenants.find((tenant) => {
         const score = ratio(tenant.Nome, data?.nomePagador); // fuzzball ratio for fuzzing matching the name string as it can be different from the receipt and the db
         return score > 59;
       });
 
       if (!tempTenant) {
-        setInquilinoError(true);
-        setInquilinoDb(null);
+        setTenantError(true);
+        setTenantDb(null);
       } else {
-        setInquilinoError(false);
-        setInquilinoDb(tempTenant);
+        setTenantError(false);
+        setTenantDb(tempTenant);
       }
     }
-  }, [inquilinos, data]);
+  }, [tenants, data]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const result = await adicionarPagamento({
-      inquilinoId: inquilinoDb.Id,
+      inquilinoId: tenantDb.Id,
       valor: data.valorPago,
       dataPagamento: parseDateString(data.dataPagamento),
-      mesReferente: mesReferente,
-      anoReferente: anoReferente,
+      mesReferente: referenceMonth,
+      anoReferente: referenceYear,
     });
 
     if (!isAdcionarPagametoError) {
@@ -252,8 +252,8 @@ export const GenerateResult: FC<GenerateResultProps> = ({ base64Image, setOpen, 
     <form onSubmit={onSubmit} className="flex flex-col gap-3 p-3" style={{ maxHeight: "600px", maxWidth: "1000px" }}>
       <div className="flex flex-col">
         <label className="text-gray-700 font-bold mb-1">Nome</label>
-        <p>{inquilinoDb?.Nome || `${data?.nomePagador} (nome no comprovante)`}</p>
-        {inquilinoError && <p className="text-red-400">Inquilino não registrado ou com nome registrado muito diferente do comprovante</p>}
+        <p>{tenantDb?.Nome || `${data?.nomePagador} (nome no comprovante)`}</p>
+        {tenantError && <p className="text-red-400">Inquilino não registrado ou com nome registrado muito diferente do comprovante</p>}
       </div>
       <div className="flex flex-col">
         <label className="text-gray-700 font-bold mb-1">Valor</label>
@@ -264,10 +264,10 @@ export const GenerateResult: FC<GenerateResultProps> = ({ base64Image, setOpen, 
         <p>{data?.dataPagamento}</p>
       </div>
       <div className="flex gap-5">
-        <AnoSelect ano={anoReferente} onChange={(e) => setAnoReferente(e.target.value)} required={true} />
-        <MesSelect mes={mesReferente} setMes={setMesReferente} required={true} />
+        <SelectYear year={referenceYear} onChange={(e) => setReferenceYear(e.target.value)} required={true} />
+        <MonthSelect month={referenceMonth} setMonth={setReferenceMonth} required={true} />
       </div>
-      <ButtonCancelarConfirmar onCancel={onClose} confirmarDisabled={inquilinoError} />
+      <ConfirmCancelButtons onCancel={onClose} confirmDisabled={tenantError} />
       {isError && <p className="text-red-400">Ocorreu um erro no gpt: {(error as Error).message}</p>}
       {isAdcionarPagametoError && <p className="text-red-400">Ocorreu um erro ao tentar adicionar o pagamento: {(adicionarPagamentoError as Error).message}</p>}
       {isAdcionarComprovanteError && (
