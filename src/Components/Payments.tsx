@@ -1,5 +1,5 @@
 "use client";
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useRef, useState } from "react";
 import HostModal from "./Shared/HostModal";
 import { Payment } from "@/types/Payment";
 import { ConfirmCancelButtons } from "./Shared/ConfirmCancelButtons";
@@ -14,6 +14,9 @@ import { PropertySelect } from "./Shared/PropertySelect";
 import { BeneficiarySelect } from "./Shared/BeneficiarySelect";
 import SelectYear from "./Shared/YearSelect";
 import { useAddEditPayment, useDeletePayment, useGetAllPayments } from "@/EasySuitesApi/EasySuitesQueries";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faAdd } from "@fortawesome/free-solid-svg-icons/faAdd";
 
 export const Payments: FC = () => {
   const [referenceMonth, setReferenceMonth] = useState(null);
@@ -61,26 +64,28 @@ export const Payments: FC = () => {
 
   return (
     <>
-      <div className="flex flex-row items-end justify-between mt-5 px-4 rounded p-absolute">
-        <div className="flex items-end gap-5 w-3/4">
+      <div className="flex flex-col items-end justify-between mt-5 px-4 py-2 rounded p-absolute gap-4">
+        <div className="flex justify-start items-end gap-5 w-full">
           <SelectYear year={referenceYear} onChange={onChangeYear} />
           {referenceYear && <MonthSelect month={referenceMonth} setMonth={setReferenceMonth} />}
           <PropertySelect propertyId={propertyId} onChange={onChangeProperty} />
           <TenantSelect tenantId={tenantId} setTenantId={setTenantId} propertyId={propertyId} />
           <BeneficiarySelect beneficiaryId={beneficiaryId} setBeneficiaryId={setBeneficiaryId} />
-          <button onClick={() => refetch()} className="bg-purple-500 hover:bg-purple-700 text-white h-1/2 font-bold text-lg py-2 px-8 rounded">
+          <button onClick={() => refetch()} className="bg-purple-500 hover:bg-purple-700 text-white h-1/2 font-bold text-lg py-1 px-6 rounded">
             Filtrar
           </button>
         </div>
-        <button onClick={() => setAddEditPaymentOpen(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg py-2 px-8 rounded">
-          Adicionar
-        </button>
-        <button onClick={() => setGenerateFomReceiptOpen(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg py-2 px-8 rounded">
-          Gerar por recibo
-        </button>
+        <div className="flex justify-start w-full gap-5">
+          <button onClick={() => setAddEditPaymentOpen(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg py-1 px-6 rounded">
+            Adicionar
+          </button>
+          <button onClick={() => setGenerateFomReceiptOpen(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold text-lg py-1 px-6 rounded">
+            Gerar por recibo
+          </button>
+        </div>
       </div>
 
-      <div className="mt-100 h-[700px] overflow-y-auto">
+      <div className="mt-100 h-[650px] overflow-y-auto">
         <table className="border-collapse w-full mt-5">
           <thead>
             <tr className="bg-white">
@@ -111,7 +116,7 @@ export const Payments: FC = () => {
                 <td className="border border-gray-300 p-2">{p.BeneficiarioNome}</td>
                 <td className="border border-gray-300 p-2">
                   <button
-                    className={"font-bold py-1 px-2 rounded hover:bg-gray-300"}
+                    className="font-bold py-3 px-10 rounded hover:bg-blue-200"
                     style={!p.ComprovanteUrl ? { color: "red" } : { color: "green" }}
                     onClick={() => {
                       setCurrentPayment(p);
@@ -119,20 +124,21 @@ export const Payments: FC = () => {
                     }}
                     disabled={!p.Id}
                   >
-                    {p.ComprovanteUrl ? "Comprovante" : "Sem Comprovante"}
+                    {p.ComprovanteUrl ? <FontAwesomeIcon icon={faCheck} className="text-2xl" /> : <FontAwesomeIcon icon={faAdd} className="text-2xl" />}
                   </button>
                 </td>
                 <td className="border border-gray-300 p-2">
                   <button
-                    disabled={!p.Observacao}
-                    className={"font-bold py-1 px-2 text-blue-500 rounded hover:bg-blue-300"}
+                    disabled={!p.Id}
+                    className={"font-bold py-3 px-8 rounded hover:bg-blue-300"}
+                    style={!p.Observacao ? { color: "gray" } : { color: "#5a6eed" }}
                     onClick={() => {
                       console.log(p);
                       setCurrentPayment(p);
                       setObservationOpen(true);
                     }}
                   >
-                    {p.Observacao ? "Observação" : "Sem Observação"}
+                    {p.Observacao ? <FontAwesomeIcon icon={faEye} className="text-2xl" /> : <p className="text-xl">---</p>}
                   </button>
                 </td>
                 <td className="border border-gray-300 p-2">
@@ -206,12 +212,7 @@ export const Payments: FC = () => {
         />
       </HostModal>
       <HostModal isOpen={observationOpen} onRequestClose={onCloseObservation}>
-        <div className="flex flex-col justify-between items-center h-48">
-          <textarea disabled className="w-full p-1 h-28 border-2 border-gray-200" value={currentPayment?.Observacao}></textarea>
-          <button onClick={onCloseObservation} className="bg-gray-500 hover:bg-gray-700 text-white font-bold  py-2 px-6 rounded mb-5">
-            Fechar
-          </button>
-        </div>
+        <ObservationForm payment={currentPayment} onClose={onCloseObservation} />
       </HostModal>
       <HostModal onRequestClose={() => setGenerateFomReceiptOpen(false)} isOpen={generateFromReceiptOpen}>
         <GenerateFromReceiptForm setOpen={setGenerateFomReceiptOpen} />
@@ -310,6 +311,37 @@ const AddEditPaymentForm: FC<AddEditPaymentFormProps> = ({ onCancel, payment }) 
       </div>
       <ConfirmCancelButtons onCancel={onCancel} />
       {isError && !isLoading && <p className="py-5 text-red-500">{error.message}</p>}
+    </form>
+  );
+};
+
+type ObservationFormProps = {
+  payment: Payment;
+  onClose: () => void;
+};
+
+const ObservationForm: FC<ObservationFormProps> = ({ payment, onClose }) => {
+  const { mutateAsync: editPayment, isLoading, isError, error } = useAddEditPayment();
+  const [observation, setObservation] = useState(payment?.Observacao || "");
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    await editPayment({
+      id: payment.Id,
+      paymentDate: payment.DataPagamento,
+      value: payment.Valor,
+      tenantId: payment.InquilinoId,
+      referenceMonth: payment.MesReferente,
+      referenceYear: payment.AnoReferente,
+      observation: observation,
+    });
+    !isError && onClose();
+  };
+
+  return (
+    <form onSubmit={onSubmit} className="flex flex-col justify-between items-center h-48">
+      <textarea required className="w-full p-1 h-28 border-2 border-gray-200" value={observation} onChange={(e) => setObservation(e.target.value)}></textarea>
+      <ConfirmCancelButtons onCancel={onClose} confirmDisabled={isLoading} />
     </form>
   );
 };

@@ -251,23 +251,30 @@ export const GenerateResult: FC<GenerateResultProps> = ({ base64Image, setOpen, 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3 p-3" style={{ maxHeight: "600px", maxWidth: "1000px" }}>
       <div className="flex flex-col">
-        <label className="text-gray-700 font-bold mb-1">Nome</label>
-        <p>{tenantDb?.Nome || `${data?.nomePagador} (nome no comprovante)`}</p>
-        {tenantError && <p className="text-red-400">Inquilino não registrado ou com nome registrado muito diferente do comprovante</p>}
+        <img src={base64Image} />
+        <div className=" flex flex-col ">
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-bold mb-1">Nome</label>
+            <p>{tenantDb?.Nome || `${data?.nomePagador} (nome no comprovante)`}</p>
+            {tenantError && <p className="text-red-400">Inquilino não registrado ou com nome registrado muito diferente do comprovante</p>}
+          </div>
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-bold mb-1">Valor</label>
+            <p>R$ {data?.valorPago}</p>
+          </div>
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-bold mb-1">Data do Pagamento</label>
+            <p>{data?.dataPagamento}</p>
+          </div>
+          <div className="flex gap-5">
+            <SelectYear year={referenceYear} onChange={(e) => setReferenceYear(e.target.value)} required={true} />
+            <MonthSelect month={referenceMonth} setMonth={setReferenceMonth} required={true} />
+          </div>
+          <div className="p-3">
+            <ConfirmCancelButtons onCancel={onClose} confirmDisabled={tenantError} />
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col">
-        <label className="text-gray-700 font-bold mb-1">Valor</label>
-        <p>{data?.valorPago}</p>
-      </div>
-      <div className="flex flex-col">
-        <label className="text-gray-700 font-bold mb-1">Data do Pagamento</label>
-        <p>{data?.dataPagamento}</p>
-      </div>
-      <div className="flex gap-5">
-        <SelectYear year={referenceYear} onChange={(e) => setReferenceYear(e.target.value)} required={true} />
-        <MonthSelect month={referenceMonth} setMonth={setReferenceMonth} required={true} />
-      </div>
-      <ConfirmCancelButtons onCancel={onClose} confirmDisabled={tenantError} />
       {isError && <p className="text-red-400">Ocorreu um erro no gpt: {(error as Error).message}</p>}
       {isAdcionarPagametoError && <p className="text-red-400">Ocorreu um erro ao tentar adicionar o pagamento: {(adicionarPagamentoError as Error).message}</p>}
       {isAdcionarComprovanteError && (
