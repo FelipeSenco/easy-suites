@@ -79,12 +79,12 @@ export const useGetAllTenants = (enabled = false) => {
 };
 
 type useGetAllPaymentsParams = {
-  anoReferente?: string;
-  mesReferente?: number;
+  referenceYear?: string;
+  referenceMonth?: number;
   enabled?: boolean;
-  inquilinoId?: number;
-  propriedadeId?: number;
-  beneficiarioId?: number;
+  tenantId?: number;
+  propertyId?: number;
+  beneficiaryId?: number;
 };
 
 export const useGetAllPayments = (params: useGetAllPaymentsParams) => {
@@ -97,11 +97,11 @@ export const useGetAllPayments = (params: useGetAllPaymentsParams) => {
     async ({ pageParam = 0 }) =>
       getAllPayments({
         pageParam,
-        mesReferente: params.mesReferente,
-        anoReferente: params.anoReferente,
-        inquilinoId: params.inquilinoId,
-        propriedadeId: params.propriedadeId,
-        beneficiarioId: params.beneficiarioId,
+        referenceYear: params.referenceYear,
+        referenceMonth: params.referenceMonth,
+        tenantId: params.tenantId,
+        propertyId: params.propertyId,
+        beneficiaryId: params.beneficiaryId,
       }),
     {
       getNextPageParam: (lastPage, pages) => pages.length,
@@ -148,7 +148,7 @@ export const useEditRoomValue = () => {
 
       queryClient.setQueryData(
         ["quartos"],
-        currentData.map((quarto) => (quarto.Id === args.quartoId ? { ...quarto, Valor: args.novoValor } : quarto))
+        currentData.map((quarto) => (quarto.Id === args.roomId ? { ...quarto, Valor: args.newValue } : quarto))
       );
     },
   });
@@ -201,7 +201,7 @@ export const useAddEditPayment = () => {
           const [firstPage, ...rest] = pages;
 
           // Filter out any pagamento with null Id and matching InquilinoId from the first page
-          const filteredFirstPage = firstPage.filter((payment: Payment) => !(payment.Id === null && payment.InquilinoId === args.inquilinoId));
+          const filteredFirstPage = firstPage.filter((payment: Payment) => !(payment.Id === null && payment.InquilinoId === args.tenantId));
 
           return {
             ...oldQueryData,
@@ -266,9 +266,7 @@ export const useAddEditReceipt = () => {
 
         return {
           ...oldQueryData,
-          pages: pages.map((page: Payment[]) =>
-            page.map((payment) => (payment.Id === args.pagamento.Id ? { ...payment, ComprovanteUrl: data?.url } : payment))
-          ),
+          pages: pages.map((page: Payment[]) => page.map((payment) => (payment.Id === args.payment.Id ? { ...payment, ComprovanteUrl: data?.url } : payment))),
         };
       });
     },

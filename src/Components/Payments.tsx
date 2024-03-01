@@ -22,11 +22,11 @@ export const Payments: FC = () => {
   const [tenantId, setTenantId] = useState(null);
   const [beneficiaryId, setBeneficiaryId] = useState(null);
   const { pagamentos, hasNextPage, fetchNextPage, refetch } = useGetAllPayments({
-    anoReferente: referenceYear,
-    mesReferente: referenceMonth,
-    inquilinoId: tenantId,
-    propriedadeId: propertyId,
-    beneficiarioId: beneficiaryId,
+    referenceYear,
+    referenceMonth,
+    tenantId,
+    propertyId,
+    beneficiaryId,
   });
   const { mutateAsync: deletePayment, isError: isDeleteError, isLoading: isDeleteLoading, error: deleteError } = useDeletePayment();
   const [currentPayment, setCurrentPayment] = useState(null);
@@ -238,12 +238,12 @@ const AddEditPaymentForm: FC<AddEditPaymentFormProps> = ({ onCancel, payment }) 
     e.preventDefault();
     await addEditPayment({
       id: payment?.Id,
-      inquilinoId: tenantId,
-      valor: value,
-      dataPagamento: paymentDate,
-      mesReferente: referenceMonth,
-      anoReferente: referenceYear,
-      observacao: observation,
+      tenantId,
+      value,
+      paymentDate,
+      referenceMonth,
+      referenceYear,
+      observation,
     });
     if (!isError) {
       onCancel();

@@ -132,15 +132,15 @@ const TenantForm: FC<TenantFormProps> = ({ tenant, onCancel }) => {
 
     await addEditTenant({
       id: tenant?.Id,
-      quartoId: roomId,
-      propriedadeId: propertyId,
-      nome: name,
-      beneficiarioId: beneficiaryId,
-      inicioAluguel: rentStartDate,
-      fimAluguel: rentEndDate,
-      diaVencimento: paymentDay,
+      roomId,
+      propertyId,
+      name,
+      beneficiaryId,
+      rentStartDate,
+      rentEndDate,
+      paymentDay,
       cpf,
-      telefone: fone,
+      fone,
     });
     if (!isError) {
       onCancel();

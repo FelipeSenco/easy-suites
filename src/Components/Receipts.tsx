@@ -34,12 +34,12 @@ export const ReceiptForm: FC<ReceiptFormProps> = ({ onCancel, payment }) => {
   }, [newReceiptFile]);
 
   const onUpdate = async () => {
-    !!newReceiptFile && (await adicionarAtualizarComprovante({ pagamento: payment, imageBase64: newReceiptFile }));
+    !!newReceiptFile && (await adicionarAtualizarComprovante({ payment, imageBase64: newReceiptFile }));
     !isError && onCancel();
   };
 
   const onDelete = async () => {
-    await adicionarAtualizarComprovante({ pagamento: payment, imageBase64: null });
+    await adicionarAtualizarComprovante({ payment, imageBase64: null });
     !isError && onCancel();
   };
 
@@ -223,15 +223,15 @@ export const GenerateResult: FC<GenerateResultProps> = ({ base64Image, setOpen, 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const result = await adicionarPagamento({
-      inquilinoId: tenantDb.Id,
-      valor: data.valorPago,
-      dataPagamento: parseDateString(data.dataPagamento),
-      mesReferente: referenceMonth,
-      anoReferente: referenceYear,
+      tenantId: tenantDb.Id,
+      value: data.valorPago,
+      paymentDate: parseDateString(data.dataPagamento),
+      referenceMonth,
+      referenceYear,
     });
 
     if (!isAdcionarPagametoError) {
-      await adicionarComprovante({ imageBase64: base64Image, pagamento: result });
+      await adicionarComprovante({ imageBase64: base64Image, payment: result });
       if (!isAdcionarComprovanteError) {
         setParentModalOpen(false);
         onClose();

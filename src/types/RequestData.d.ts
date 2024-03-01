@@ -1,42 +1,42 @@
-import { Pagamento } from "./Payment";
+import { Payment } from "./Payment";
 
 export type GetAllPaymentsData = {
   pageParam: number;
-  anoReferente: string;
-  mesReferente: number;
-  inquilinoId?: number;
-  propriedadeId?: number;
-  beneficiarioId?: number;
+  referenceYear: string;
+  referenceMonth: number;
+  tenantId?: number;
+  propertyId?: number;
+  beneficiaryId?: number;
 };
 
 export type EditRoomValueData = {
-  novoValor: number;
-  quartoId: number;
+  newValue: number;
+  roomId: number;
 };
 
 export type AddEditTenantData = {
   id?: number;
-  quartoId?: number;
-  propriedadeId: number;
-  nome: string;
-  beneficiarioId?: number;
-  inicioAluguel?: Date;
-  fimAluguel?: Date;
-  diaVencimento?: number;
+  roomId?: number;
+  propertyId: number;
+  name: string;
+  beneficiaryId?: number;
+  rentStartDate?: Date;
+  rentEndDate?: Date;
+  paymentDay?: number;
   cpf?: string;
-  telefone?: string;
+  fone?: string;
 };
 
 export type AddEditPaymentData = {
   id?: number;
-  inquilinoId: number;
-  valor: number;
-  dataPagamento: Date;
-  mesReferente: number;
-  anoReferente: string;
-  observacao?: string;
+  tenantId: number;
+  value: number;
+  paymentDate: Date;
+  referenceMonth: number;
+  referenceYear: string;
+  observation?: string;
 };
 
-export type AddEditReceiptData = { imageBase64: string; pagamento: Pagamento };
+export type AddEditReceiptData = { imageBase64: string; payment: Payment };
 
 export type GenerateFromReceiptResponse = { dataPagamento: string; valorPago: number; nomePagador: string };

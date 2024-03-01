@@ -49,16 +49,16 @@ export const getAllTenants = async () => {
   return response.data as Tenant[];
 };
 
-export const getAllPayments = async (data: GetAllPaymentsData = { pageParam: 0, anoReferente: "", mesReferente: null }) => {
+export const getAllPayments = async (data: GetAllPaymentsData = { pageParam: 0, referenceYear: "", referenceMonth: null }) => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "GetAllPagamentos",
     parameters: [
       { name: "page", type: SqlTypes.SmallInt, value: data.pageParam },
-      { name: "anoReferente", type: SqlTypes.Varchar, value: !!data.anoReferente ? data.anoReferente : null },
-      { name: "mesReferente", type: SqlTypes.TinyInt, value: !!data.mesReferente ? data.mesReferente : null },
-      { name: "inquilinoId", type: SqlTypes.TinyInt, value: !!data.inquilinoId ? data.inquilinoId : null },
-      { name: "propriedadeId", type: SqlTypes.Int, value: !!data.propriedadeId ? data.propriedadeId : null },
-      { name: "beneficiarioId", type: SqlTypes.Int, value: !!data.beneficiarioId ? data.beneficiarioId : null },
+      { name: "anoReferente", type: SqlTypes.Varchar, value: !!data.referenceYear ? data.referenceYear : null },
+      { name: "mesReferente", type: SqlTypes.TinyInt, value: !!data.referenceMonth ? data.referenceMonth : null },
+      { name: "inquilinoId", type: SqlTypes.TinyInt, value: !!data.tenantId ? data.tenantId : null },
+      { name: "propriedadeId", type: SqlTypes.Int, value: !!data.propertyId ? data.propertyId : null },
+      { name: "beneficiarioId", type: SqlTypes.Int, value: !!data.beneficiaryId ? data.beneficiaryId : null },
     ],
   });
   return response.data as Payment[];
@@ -75,8 +75,8 @@ export const editRoomValue = async (editarValorQuartoData: EditRoomValueData) =>
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "EditarValorQuarto",
     parameters: [
-      { name: "novoValor", type: SqlTypes.Money, value: editarValorQuartoData.novoValor },
-      { name: "quartoId", type: SqlTypes.Int, value: editarValorQuartoData.quartoId },
+      { name: "novoValor", type: SqlTypes.Money, value: editarValorQuartoData.newValue },
+      { name: "quartoId", type: SqlTypes.Int, value: editarValorQuartoData.roomId },
     ],
   });
   return response;
@@ -87,15 +87,15 @@ export const addEditTenant = async (adicionarEditarInquilinoData: AddEditTenantD
     procName: "AdicionarEditarInquilino",
     parameters: [
       { name: "id", type: SqlTypes.Int, value: adicionarEditarInquilinoData.id },
-      { name: "quartoId", type: SqlTypes.Int, value: adicionarEditarInquilinoData.quartoId },
-      { name: "propriedadeId", type: SqlTypes.Int, value: adicionarEditarInquilinoData.propriedadeId },
-      { name: "nome", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.nome },
-      { name: "beneficiarioId", type: SqlTypes.Int, value: adicionarEditarInquilinoData.beneficiarioId },
-      { name: "inicioAluguel", type: SqlTypes.DateTime, value: adicionarEditarInquilinoData.inicioAluguel },
-      { name: "fimAluguel", type: SqlTypes.DateTime, value: adicionarEditarInquilinoData.fimAluguel },
-      { name: "diaVencimento", type: SqlTypes.TinyInt, value: adicionarEditarInquilinoData.diaVencimento },
+      { name: "quartoId", type: SqlTypes.Int, value: adicionarEditarInquilinoData.roomId },
+      { name: "propriedadeId", type: SqlTypes.Int, value: adicionarEditarInquilinoData.propertyId },
+      { name: "nome", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.name },
+      { name: "beneficiarioId", type: SqlTypes.Int, value: adicionarEditarInquilinoData.beneficiaryId },
+      { name: "inicioAluguel", type: SqlTypes.DateTime, value: adicionarEditarInquilinoData.rentStartDate },
+      { name: "fimAluguel", type: SqlTypes.DateTime, value: adicionarEditarInquilinoData.rentEndDate },
+      { name: "diaVencimento", type: SqlTypes.TinyInt, value: adicionarEditarInquilinoData.paymentDay },
       { name: "cpf", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.cpf },
-      { name: "telefone", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.telefone },
+      { name: "telefone", type: SqlTypes.Varchar, value: adicionarEditarInquilinoData.fone },
     ],
   });
   return response.data[0] as Tenant;
@@ -106,12 +106,12 @@ export const addEditPayment = async (adicionarEditarPagamento: AddEditPaymentDat
     procName: "AdicionarEditarPagamento",
     parameters: [
       { name: "id", type: SqlTypes.Int, value: adicionarEditarPagamento.id },
-      { name: "inquilinoId", type: SqlTypes.Int, value: adicionarEditarPagamento.inquilinoId },
-      { name: "valor", type: SqlTypes.Money, value: adicionarEditarPagamento.valor },
-      { name: "dataPagamento", type: SqlTypes.DateTime, value: adicionarEditarPagamento.dataPagamento },
-      { name: "mesReferente", type: SqlTypes.TinyInt, value: adicionarEditarPagamento.mesReferente },
-      { name: "anoReferente", type: SqlTypes.Varchar, value: adicionarEditarPagamento.anoReferente },
-      { name: "observacao", type: SqlTypes.Varchar, value: !!adicionarEditarPagamento.observacao ? adicionarEditarPagamento.observacao : null },
+      { name: "inquilinoId", type: SqlTypes.Int, value: adicionarEditarPagamento.tenantId },
+      { name: "valor", type: SqlTypes.Money, value: adicionarEditarPagamento.value },
+      { name: "dataPagamento", type: SqlTypes.DateTime, value: adicionarEditarPagamento.paymentDate },
+      { name: "mesReferente", type: SqlTypes.TinyInt, value: adicionarEditarPagamento.referenceMonth },
+      { name: "anoReferente", type: SqlTypes.Varchar, value: adicionarEditarPagamento.referenceYear },
+      { name: "observacao", type: SqlTypes.Varchar, value: !!adicionarEditarPagamento.observation ? adicionarEditarPagamento.observation : null },
     ],
   });
   return response.data[0] as Payment;
@@ -123,7 +123,7 @@ export const addEditReceipt = async (data: AddEditReceiptData) => {
   const response = await axios.post(`${apiUrl}/executeProc`, {
     procName: "AdicionarEditarComprovante",
     parameters: [
-      { name: "pagamentoId", type: SqlTypes.Int, value: data.pagamento.Id },
+      { name: "pagamentoId", type: SqlTypes.Int, value: data.payment.Id },
       {
         name: "url",
         type: SqlTypes.Varchar,

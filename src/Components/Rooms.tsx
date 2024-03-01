@@ -71,7 +71,7 @@ export const EditRoom: FC<EditRoomProps> = ({ room, onCancel }) => {
   const { mutateAsync: editRoomValue, isLoading, isError, error } = useEditRoomValue();
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await editRoomValue({ novoValor: value, quartoId: room.Id });
+    await editRoomValue({ newValue: value, roomId: room.Id });
     if (!isError) {
       onCancel();
     }
