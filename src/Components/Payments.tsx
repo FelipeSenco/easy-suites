@@ -17,6 +17,7 @@ import { useAddEditPayment, useDeletePayment, useGetAllPayments } from "@/EasySu
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faEye } from "@fortawesome/free-solid-svg-icons";
 import { faAdd } from "@fortawesome/free-solid-svg-icons/faAdd";
+import { LoadingSpinner } from "./Shared/LoadingSpinner";
 
 export const Payments: FC = () => {
   const [referenceMonth, setReferenceMonth] = useState(null);
@@ -24,7 +25,7 @@ export const Payments: FC = () => {
   const [propertyId, setPropertyId] = useState(null);
   const [tenantId, setTenantId] = useState(null);
   const [beneficiaryId, setBeneficiaryId] = useState(null);
-  const { pagamentos, hasNextPage, fetchNextPage, refetch } = useGetAllPayments({
+  const { pagamentos, isLoading, hasNextPage, fetchNextPage, refetch } = useGetAllPayments({
     referenceYear,
     referenceMonth,
     tenantId,
@@ -61,6 +62,8 @@ export const Payments: FC = () => {
     setTenantId(null);
     setPropertyId(e.target.value ? Number(e.target.value) : null);
   };
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <>

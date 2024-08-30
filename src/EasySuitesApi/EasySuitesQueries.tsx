@@ -69,13 +69,13 @@ export const useGetAllTenants = (enabled = false) => {
 
   const fetchEnabled = enabled || !currentData;
 
-  const { data, isLoading, isError } = useQuery(["inquilinos"], {
+  const { data, isLoading, isError, isFetching } = useQuery(["inquilinos"], {
     queryFn: getAllTenants,
     enabled: fetchEnabled,
     initialData: [],
   });
 
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, isFetching };
 };
 
 type useGetAllPaymentsParams = {
@@ -122,6 +122,7 @@ export const useGetAllPayments = (params: useGetAllPaymentsParams) => {
     hasNextPage,
     refetch,
     fetchNextPage,
+    isLoading,
   };
 };
 

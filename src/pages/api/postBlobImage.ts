@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { imageBase64, payment } = req.body as UploadRequestBody;
     const blobService = new BlobStorageService(process.env.AZURE_STORAGE_CONNECTION_STRING, process.env.NEXT_PUBLIC_ENVIRONMENT);
     const mimeType = imageBase64?.substring(5, imageBase64.indexOf(";"));
-    const blobExtension = mimeType.split("/")[1];
+    const blobExtension = !!mimeType ? mimeType.split("/")[1] : "";
 
     await blobService.postBlobFile(imageBase64, payment, mimeType, blobExtension);
 

@@ -63,7 +63,7 @@ export const ReceiptForm: FC<ReceiptFormProps> = ({ onCancel, payment }) => {
     <div className="flex flex-col justify-center items-center" style={{ maxHeight: "600px", maxWidth: "1000px" }}>
       <div className="flex flex-col justify-between items-center gap-5 overflow-y-auto">
         <img className="w-1/2 h-1/2" src={newReceiptFile || payment?.ComprovanteUrl} alt="No image" />
-        {!payment?.ComprovanteUrl && <p>Não existe imagem de recibo associado a esse payment.</p>}
+        {!payment?.ComprovanteUrl && <p>Não existe imagem de recibo associado a esse pagamento.</p>}
 
         <div className="flex flex-col bg-gray-200 p-2 ">
           <label htmlFor="receipt" className="text-gray-700 font-bold mb-1">
@@ -198,7 +198,7 @@ export const GenerateResult: FC<GenerateResultProps> = ({ base64Image, setOpen, 
   } = useAddEditReceipt();
   const queryClient = useQueryClient();
   const { data: tenants } = useGetAllTenants();
-  const [referenceYear, setReferenceYear] = useState(null);
+  const [referenceYear, setReferenceYear] = useState(new Date().getUTCFullYear().toString());
   const [referenceMonth, setReferenceMonth] = useState(null);
   const [tenantDb, setTenantDb] = useState<Tenant>(null);
   const [tenantError, setTenantError] = useState(false);

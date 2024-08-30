@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const payload = {
-    model: "gpt-4-vision-preview",
+    model: "gpt-4o-mini",
     messages: [
       {
         role: "user",
